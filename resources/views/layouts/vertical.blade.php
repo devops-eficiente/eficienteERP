@@ -9,7 +9,7 @@
     <meta content="ICH Laboral" name="author">
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="shortcut icon" href="{{ asset('eficiente/logos/icono.png') }}">
 
     @yield('css')
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}

@@ -167,7 +167,7 @@
                             </div>
 
                             <div dir="ltr" class="mt-2">
-                                <div id="crm-project-statistics" class="apex-charts" data-colors="#ffee61,#3073F1"></div>
+                                <div id="crm-project-statistics" class="apex-charts" data-colors="#ffee61,#3073F1" data-expenses="" data-income="" data-months=""></div>
                             </div>
                         </div>
                     </div>

@@ -4,13 +4,13 @@
     <a href="#" class="logo-box">
         <!-- Light Brand Logo -->
         <div class="logo-light">
-            <img src="/images/logo-light.png" class="logo-lg h-6" alt="Light logo">
+            <img src="/{{asset('eficiente/logos/logo.png')}}" class="logo-lg h-6" alt="Light logo">
             <img src="{{asset('eficiente/logos/iconlogo.png')}}" class="logo-sm rounded-xl" alt="Small logo">
         </div>
 
         <!-- Dark Brand Logo -->
         <div class="logo-dark">
-            <img src="/images/logo-dark.png" class="logo-lg h-6" alt="Dark logo">
+            <img src="{{asset('eficiente/logos/logo.png')}}" class="logo-lg h-6" alt="Dark logo">
             <img src="{{asset('eficiente/logos/iconlogo.png')}}" class="logo-sm rounded-xl" alt="Small logo">
         </div>
     </a>

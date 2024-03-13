@@ -9,7 +9,7 @@
     <meta content="ICH Laboral" name="author">
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="shortcut icon" href="{{ asset('eficiente/logos/icono.png') }}">
 
     @yield('css')
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
@@ -28,8 +28,10 @@
                 <div class="card overflow-hidden sm:rounded-md rounded-none">
                     <div class="p-6">
                         <a href="#" class="block mb-8 ">
-                            <img class="h-10 block dark:hidden" src="{{asset('eficiente/logos/logolight.png')}}" alt="">
-                            <img class="h-14 hidden dark:block" src="{{asset('eficiente/logos/logolight.png')}}" alt="">
+                            <img class="h-10 block dark:hidden" src="{{ asset('eficiente/logos/logolight.png') }}"
+                                alt="">
+                            <img class="h-14 hidden dark:block" src="{{ asset('eficiente/logos/logolight.png') }}"
+                                alt="">
                         </a>
 
                         <form method="POST" action="{{ route('login') }}">
