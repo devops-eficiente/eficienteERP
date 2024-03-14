@@ -22,7 +22,7 @@
     <div class="bg-[#28489d]">
 
 
-        <div class="h-screen w-screen flex justify-center items-center bg-white">
+        <div class="h-screen md:h-full md:full w-screen flex justify-center items-center bg-white">
 
             <div class=" w-full">
                 <div class=" overflow-hidden sm:rounded-md rounded-none">
