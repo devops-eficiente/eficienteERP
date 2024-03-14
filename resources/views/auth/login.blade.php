@@ -22,9 +22,9 @@
     <div class="bg-white">
 
 
-        <div class="h-screen w-screen flex justify-center items-center">
+        <div class="h-full w-full flex justify-center items-center">
 
-            <div class="md:w-[35%] w-full">
+            <div class="md:w-1/2 w-full">
                 <div class=" overflow-hidden sm:rounded-md rounded-none">
                     <div class="p-6">
                         <a href="#" class="block mb-8 ">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-            <div class=" w-[65%] md:block hidden">
+            <div class=" w-1/2 h-full md:block hidden">
                 <img src="{{asset('eficiente/login/login4.jpg')}}" alt="">
             </div>
         </div>
