@@ -17,12 +17,12 @@
     @vite(['resources/js/head.js', 'resources/js/config.js'])
 </head>
 
-<body>
+<body class="bg-[#28489d]">
 
-    <div class="bg-white">
+    <div class="bg-[#28489d]">
 
 
-        <div class="h-full lg:h-screen w-full lg:w-screen flex justify-center items-center">
+        <div class="h-screen w-screen flex justify-center items-center bg-white">
 
             <div class=" w-full">
                 <div class=" overflow-hidden sm:rounded-md rounded-none">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-            <div class=" w-full h-full md:block hidden">
+            <div class=" w-full h-full md:flex hidden bg-[#28489d]  items-center">
                 <img src="{{asset('eficiente/login/login4.jpg')}}" alt="">
             </div>
         </div>
