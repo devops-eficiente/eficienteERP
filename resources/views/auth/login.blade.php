@@ -19,13 +19,13 @@
 
 <body>
 
-    <div class="bg-gradient-to-r from-rose-100 to-teal-100 dark:from-gray-700 dark:via-gray-900 dark:to-black">
+    <div class="bg-white">
 
 
         <div class="h-screen w-screen flex justify-center items-center">
 
-            <div class="2xl:w-1/4 lg:w-1/3 md:w-1/2 w-full">
-                <div class="card overflow-hidden sm:rounded-md rounded-none">
+            <div class="md:w-[35%] w-full">
+                <div class=" overflow-hidden sm:rounded-md rounded-none">
                     <div class="p-6">
                         <a href="#" class="block mb-8 ">
                             <img class="h-10 block dark:hidden" src="{{ asset('eficiente/logos/logolight.png') }}"
@@ -67,6 +67,9 @@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class=" w-[65%] md:block hidden">
+                <img src="{{asset('eficiente/login/login4.jpg')}}" alt="">
             </div>
         </div>
 
