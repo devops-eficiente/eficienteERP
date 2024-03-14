@@ -66,8 +66,8 @@
                 </div>
             </div>
         </div>
-        <div class=" w-full h-screen md:flex hidden bg-[#28489d]  items-center">
-            <img src="{{ asset('eficiente/login/login4.jpg') }}" alt="">
+        <div class=" w-full h-screen md:flex hidden bg-[#28489d]  items-center justify-center">
+            <img src="{{ asset('eficiente/login/login.png') }}" alt="" class="w-96">
         </div>
     </div>
 
