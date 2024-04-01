@@ -41,7 +41,7 @@ class EmployeeStoreRequest extends FormRequest
             'contacts.phone' => 'required|digits:10',
             'emergency_contacts.name' => 'required',
             'emergency_contacts.phone' => 'required|digits:10',
-            'zip_code' => 'nullable|digits:10',
+            'zip_code' => 'nullable|digits:5',
         ];
     }
     public function attributes(): array
