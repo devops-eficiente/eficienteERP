@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/',[AdminController::class,'index'])->middleware('auth')->name('index');
+
+Route::prefix('empleados')->name('admin.')->middleware('auth')->group(function(){
+    Route::get('/',[EmployeeController::class,'index'])->name('employees');
+    Route::get('/crear',[EmployeeController::class,'create'])->name('create_employee');
+    Route::post('/agregar',[EmployeeController::class,'store'])->name('store_employee');
+
+});

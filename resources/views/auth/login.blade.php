@@ -39,14 +39,14 @@
                             <label class="block text-sm font-medium text-gray-600 dark:text-gray-200 mb-2"
                                 for="LoggingEmailAddress">Correo</label>
                             <input id="LoggingEmailAddress" class="form-input" type="email"
-                                placeholder="Ingresa tu correo" name="email">
+                                placeholder="Ingresa tu correo" name="email" value="{{ old('email') }}">
                         </div>
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-600 dark:text-gray-200 mb-2"
                                 for="loggingPassword">Contraseña</label>
                             <input id="loggingPassword" class="form-input" type="password"
-                                placeholder="Ingresa tu contraseña" name="password">
+                                placeholder="Ingresa tu contraseña" name="password" value="{{ old('password') }}">
                         </div>
 
                         {{-- <div class="flex items-center justify-between mb-4">

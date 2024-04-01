@@ -4,14 +4,14 @@
     <a href="#" class="logo-box">
         <!-- Light Brand Logo -->
         <div class="logo-light">
-            <img src="/{{asset('eficiente/logos/logo.png')}}" class="logo-lg h-6" alt="Light logo">
-            <img src="{{asset('eficiente/logos/iconlogo.png')}}" class="logo-sm rounded-xl" alt="Small logo">
+            <img src="/{{ asset('eficiente/logos/logo.png') }}" class="logo-lg h-6" alt="Light logo">
+            <img src="{{ asset('eficiente/logos/iconlogo.png') }}" class="logo-sm rounded-xl" alt="Small logo">
         </div>
 
         <!-- Dark Brand Logo -->
         <div class="logo-dark">
-            <img src="{{asset('eficiente/logos/logo.png')}}" class="logo-lg h-6" alt="Dark logo">
-            <img src="{{asset('eficiente/logos/iconlogo.png')}}" class="logo-sm rounded-xl" alt="Small logo">
+            <img src="{{ asset('eficiente/logos/logo.png') }}" class="logo-lg h-6" alt="Dark logo">
+            <img src="{{ asset('eficiente/logos/iconlogo.png') }}" class="logo-sm rounded-xl" alt="Small logo">
         </div>
     </a>
 
@@ -27,17 +27,35 @@
             <li class="menu-title">Inicio</li>
 
             <li class="menu-item">
-                <a href="{{route('index')}}" class="menu-link">
+                <a href="{{ route('index') }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_home_3_line"></i></span>
                     <span class="menu-text"> Dashboard </span>
                 </a>
             </li>
-
             <li class="menu-item">
-                <a href="#" class="menu-link">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
                     <span class="menu-icon"><i class="mgc_user_5_fill"></i></span>
                     <span class="menu-text"> Empleados </span>
+                    <span class="menu-arrow"></span>
                 </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="{{ route('admin.create_employee') }}" class="menu-link">
+                            <span class="menu-text">Crear Empleado</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{route('admin.employees')}}" class="menu-link">
+                            <span class="menu-text">Ver todos</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span class="menu-text">Verificar Empleados</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
             <li class="menu-item">
                 <a href="#" class="menu-link">
