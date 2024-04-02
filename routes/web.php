@@ -21,5 +21,5 @@ Route::prefix('empleados')->name('admin.')->middleware('auth')->group(function()
     Route::get('/',[EmployeeController::class,'index'])->name('employees');
     Route::get('/crear',[EmployeeController::class,'create'])->name('create_employee');
     Route::post('/agregar',[EmployeeController::class,'store'])->name('store_employee');
-
+    Route::post('subir_documento',[EmployeeController::class,'uploadDocument'])->name('uploadDocument');
 });

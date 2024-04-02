@@ -66,10 +66,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
                                             {{ $employee->rfc }}
                                             @if (!$employee->rfc_verified)
-                                                <br>
-                                                <a class="text-primary hover:text-sky-700" href="#">
-                                                    Verificar RFC
-                                                </a>
+                                                @livewire('employee.upload-document', ['employee' => $employee])
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">

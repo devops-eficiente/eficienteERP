@@ -8,7 +8,11 @@ use App\Models\Employee;
 use App\Models\IdentificationEmployee;
 use App\Models\InstituteHealth;
 use App\Models\MaritalStatus;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpCfdi\CsfScraper\Scraper;
+use PhpCfdi\Rfc\Rfc;
+use Smalot\PdfParser\Parser;
 
 class EmployeeController extends Controller
 {
@@ -41,5 +45,68 @@ class EmployeeController extends Controller
             return back()->with('denied', $th->getMessage());
         }
         return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
+    }
+
+    public function check_rfc()
+    {
+    }
+    public function uploadDocument(Request $request)
+    {
+        $request->validate([
+            'pdf' => 'required|mimetypes:application/pdf',
+        ]);
+        try {
+            $scraper = Scraper::create();
+            $rutaDocumento = $request->file('pdf');
+
+            $rfc = Rfc::parse($this->RFC($rutaDocumento));
+            $cif = $this->CIF($rutaDocumento);
+            $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
+            $persona = json_encode($person);
+            $persona = json_decode($persona);
+            return $persona;
+        } catch (\Throwable $th) {
+            return back()->with('denied','Verificar archivo, no legible.');
+        }
+    }
+    public function CIF($path)
+    {
+        $parser = new Parser();
+        try {
+            $documento = $parser->parseFile($path); // Parsear el documento PDF
+            $textoCompleto = $documento->getText(); // Obtener el texto completo del PDF
+            $cadenaBuscada = 'idCIF:'; // Búsqueda de datos específicos
+            $posicion = strpos($textoCompleto, $cadenaBuscada);
+            if ($posicion !== false) {
+                $idCIF = substr($textoCompleto, $posicion, 18);
+                $items = explode(': ', $idCIF);
+                return $items[1];
+            } else {
+                return 'La cadena especificada no se encontró en el PDF.';
+            }
+        } catch (\Exception $e) {
+            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+        }
+    }
+
+    public function RFC($path)
+    {
+        $parser = new Parser();
+        try {
+            $documento = $parser->parseFile($path);
+            $textoCompleto = $documento->getText();
+            $cadenaBuscada = 'RFC:';
+            $posicion = strpos($textoCompleto, $cadenaBuscada);
+
+            if ($posicion !== false) {
+                $idCIF = substr($textoCompleto, $posicion, 18);
+                $items = explode(":\t", $idCIF);
+                return $items[1];
+            } else {
+                return 'La cadena especificada no se encontró en el PDF.';
+            }
+        } catch (\Exception $e) {
+            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+        }
     }
 }

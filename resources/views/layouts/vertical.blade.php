@@ -13,6 +13,7 @@
 
     @yield('css')
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
     @vite(['resources/scss/app.scss', 'resources/scss/icons.scss'])
     @vite(['resources/js/head.js', 'resources/js/config.js'])
 
@@ -48,6 +49,7 @@
     <!-- App js -->
     @yield('script-bottom')
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 
     @vite(['resources/js/app.js'])
 
