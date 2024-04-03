@@ -53,11 +53,18 @@ class EmployeeController extends Controller
     public function uploadDocument(Request $request)
     {
         $request->validate([
-            'pdf' => 'required|mimetypes:application/pdf',
+            'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
         try {
+            $parser = new Parser();
             $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
+
+            $documento = $parser->parseFile($rutaDocumento); // Parsear el documento PDF
+            $textoCompleto = $documento->getText(); // Obtener el texto completo del PDF
+            if (!$textoCompleto || empty(trim($textoCompleto))) {
+                return back()->with('denied', 'No se detecta ningún texto en el PDF.');
+            }
 
             $rfc = Rfc::parse($this->RFC($rutaDocumento));
             $cif = $this->CIF($rutaDocumento);
@@ -66,7 +73,7 @@ class EmployeeController extends Controller
             $persona = json_decode($persona);
             return $persona;
         } catch (\Throwable $th) {
-            return back()->with('denied','Verificar archivo, no legible.');
+            return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
     }
     public function CIF($path)

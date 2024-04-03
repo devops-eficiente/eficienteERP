@@ -7,7 +7,7 @@
             </div>
             <div class="flex-grow">
                 <div class="text-sm text-white font-medium">
-                    {{ $msg }}
+                    {!! $msg !!}
                 </div>
             </div>
             <button data-fc-dismiss="dismiss-alert" type="button" id="dismiss-test"
@@ -26,7 +26,7 @@
             </div>
             <div class="flex-grow">
                 <div class="text-sm text-white font-medium">
-                    {{ $msg }}
+                    {!! $msg !!}
                 </div>
             </div>
             <button data-fc-dismiss="dismiss-alert" type="button" id="dismiss-test"

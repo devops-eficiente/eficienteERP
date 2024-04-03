@@ -27,6 +27,9 @@
                         </p>
                         <input type="file" id="simpleinput" class="form-input" accept="application/pdf"
                             name="pdf">
+                            @error('pdf')
+                                <span class="text-xs text-red-800">{{$message}}</span>
+                            @enderror
                     </div>
                 </div>
                 <div class="flex justify-end items-center gap-4 p-4 border-t ">

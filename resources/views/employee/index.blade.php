@@ -63,12 +63,20 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
                                             {{ $employee->curp }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $employee->rfc }}
-                                            @if (!$employee->rfc_verified)
+                                        @if (!$employee->rfc_verified)
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
+                                                {{ $employee->rfc }}
                                                 @livewire('employee.upload-document', ['employee' => $employee])
-                                            @endif
-                                        </td>
+                                            </td>
+                                        @else
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-800 ">
+                                                {{ $employee->rfc }}
+                                                <p class="text-xs text-center">
+                                                    Verificado
+                                                    <i class="mgc_check_2_fill"></i>
+                                                </p>
+                                            </td>
+                                        @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
                                             {{ $employee->birthdate }}
                                         </td>
