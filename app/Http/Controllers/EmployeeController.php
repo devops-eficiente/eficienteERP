@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpCfdi\CsfScraper\Scraper;
 use PhpCfdi\Rfc\Rfc;
+use setasign\Fpdi\Tcpdf\Fpdi;
 use Smalot\PdfParser\Parser;
 
 class EmployeeController extends Controller
@@ -56,16 +57,8 @@ class EmployeeController extends Controller
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
         try {
-            $parser = new Parser();
             $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
-
-            $documento = $parser->parseFile($rutaDocumento); // Parsear el documento PDF
-            $textoCompleto = $documento->getText(); // Obtener el texto completo del PDF
-            if (!$textoCompleto || empty(trim($textoCompleto))) {
-                return back()->with('denied', 'No se detecta ningún texto en el PDF.');
-            }
-
             $rfc = Rfc::parse($this->RFC($rutaDocumento));
             $cif = $this->CIF($rutaDocumento);
             $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
