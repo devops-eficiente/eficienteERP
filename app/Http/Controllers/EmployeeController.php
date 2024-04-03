@@ -10,6 +10,7 @@ use App\Models\InstituteHealth;
 use App\Models\MaritalStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use PhpCfdi\CsfScraper\Scraper;
 use PhpCfdi\Rfc\Rfc;
 use setasign\Fpdi\Tcpdf\Fpdi;
@@ -51,24 +52,30 @@ class EmployeeController extends Controller
     public function check_rfc()
     {
     }
-    public function uploadDocument(Request $request)
+    public function uploadDocument(Request $request, $id)
     {
         $request->validate([
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
+        Session::forget('employee');
+        Session::forget('persona');
         try {
             $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
-            $rfc = Rfc::parse($this->RFC($rutaDocumento));
             $cif = $this->CIF($rutaDocumento);
+            $rfc = Rfc::parse($this->RFC($rutaDocumento));
             $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
             $persona = json_encode($person);
             $persona = json_decode($persona);
-            return $persona;
+            $employee = Employee::find($id);
+            Session::put('employee', $employee);
+            Session::put('persona', $persona);
+            return view('employee.verified', compact('employee', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
     }
+
     public function CIF($path)
     {
         $parser = new Parser();
@@ -108,5 +115,34 @@ class EmployeeController extends Controller
         } catch (\Exception $e) {
             return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
         }
+    }
+
+    public function continue()
+    {
+        $employee = Session::get('employee');
+        $persona = Session::get('persona');
+        $employee->update([
+            'rfc_verified' => 1,
+        ]);
+        Session::forget('employee');
+        Session::forget('persona');
+        return redirect()->route('admin.employees')->with('success','Datos Verificados correctamente.');
+    }
+    public function edit_data()
+    {
+        $employee = Session::get('employee');
+        $persona = Session::get('persona');
+        $employee->update([
+            'rfc_verified' => 1,
+            'name' => $persona->nombre,
+            'paternal_surname' => $persona->apellido_paterno,
+            'maternal_surname' => $persona->apellido_materno,
+            'rfc' => $persona->rfc,
+            'curp' => $persona->curp,
+            'zip_code' => $persona->codigo_postal,
+        ]);
+        Session::forget('employee');
+        Session::forget('persona');
+        return redirect()->route('admin.employees')->with('success','Datos Verificados correctamente.');
     }
 }

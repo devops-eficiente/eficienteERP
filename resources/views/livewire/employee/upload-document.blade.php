@@ -6,7 +6,7 @@
         class="w-full h-full mt-5 fixed top-0 left-0 z-50 transition-all duration-500 fc-modal hidden">
         <div
             class="sm:max-w-2xl fc-modal-open:opacity-100 duration-500 opacity-0 ease-out transition-all sm:w-full m-3 sm:mx-auto flex flex-col bg-white border shadow-sm rounded-md">
-            <form action="{{ route('admin.uploadDocument') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('admin.uploadDocument',$employee->id) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="flex justify-between items-center py-2.5 px-4 border-b ">
                     <h3 class="font-medium text-gray-800 text-lg">
@@ -27,9 +27,9 @@
                         </p>
                         <input type="file" id="simpleinput" class="form-input" accept="application/pdf"
                             name="pdf">
-                            @error('pdf')
-                                <span class="text-xs text-red-800">{{$message}}</span>
-                            @enderror
+                        @error('pdf')
+                            <span class="text-xs text-red-800">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
                 <div class="flex justify-end items-center gap-4 p-4 border-t ">
