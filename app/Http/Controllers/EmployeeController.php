@@ -185,7 +185,7 @@ class EmployeeController extends Controller
             fwrite($archivo_handle, implode("|", $fila) . "|\n");
         }
 
-        Cerrar el archivo
+        // Cerrar el archivo
         fclose($archivo_handle);
 
         // Forzar la descarga del archivo
