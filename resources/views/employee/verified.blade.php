@@ -186,6 +186,7 @@
         </div>
     </div>
     <div class="flex justify-around my-3">
+        <a href="{{ route('admin.employees') }}" class="btn bg-secondary text-white">Regresar</a>
         @if ($cont == 0)
             <a href="{{ route('admin.continue_employee') }}" class="btn bg-success text-white">Continuar</a>
         @else

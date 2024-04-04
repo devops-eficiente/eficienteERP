@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use PhpCfdi\CsfScraper\Scraper;
 use PhpCfdi\Rfc\Rfc;
-use setasign\Fpdi\Tcpdf\Fpdi;
 use Smalot\PdfParser\Parser;
 
 class EmployeeController extends Controller
@@ -33,6 +32,7 @@ class EmployeeController extends Controller
         $identificationEmployees = IdentificationEmployee::all();
         return view('employee.create', compact('bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
     }
+
     public function store(EmployeeStoreRequest $request)
     {
         try {
@@ -49,9 +49,6 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
     }
 
-    public function check_rfc()
-    {
-    }
     public function uploadDocument(Request $request, $id)
     {
         $request->validate([
@@ -126,8 +123,9 @@ class EmployeeController extends Controller
         ]);
         Session::forget('employee');
         Session::forget('persona');
-        return redirect()->route('admin.employees')->with('success','Datos Verificados correctamente.');
+        return redirect()->route('admin.employees')->with('success', 'Datos Verificados correctamente.');
     }
+
     public function edit_data()
     {
         $employee = Session::get('employee');
@@ -143,6 +141,58 @@ class EmployeeController extends Controller
         ]);
         Session::forget('employee');
         Session::forget('persona');
-        return redirect()->route('admin.employees')->with('success','Datos Verificados correctamente.');
+        return redirect()->route('admin.employees')->with('success', 'Datos Verificados correctamente.');
+    }
+
+    public function checkCIF(Request $request, $id)
+    {
+        Session::forget('employee');
+        Session::forget('persona');
+        try {
+            $scraper = Scraper::create();
+
+            $rfc = Rfc::parse($request->rfc);
+
+            $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $request->cif);
+            $persona = json_encode($person);
+            $persona = json_decode($persona);
+            $employee = Employee::find($id);
+            Session::put('employee', $employee);
+            Session::put('persona', $persona);
+            return view('employee.verified', compact('employee', 'persona'));
+        } catch (\Throwable $th) {
+            return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
+        }
+    }
+
+    public function export_rfc()
+    {
+        // Datos que deseas exportar
+        $employees = Employee::select(
+            'rfc','curp'
+        )->get();
+        // $datos = [['Nombre', 'Edad', 'Correo electrónico'], ['Juan', 25, 'juan@example.com'], ['María', 30, 'maria@example.com'], ['Pedro', 28, 'pedro@example.com']];
+
+        // Nombre del archivo de texto
+        $archivo = 'datos.txt';
+        $employees = $employees->toArray();
+
+        // Abrir el archivo en modo escritura
+        ($archivo_handle = fopen($archivo, 'w')) or die('No se puede abrir el archivo.');
+
+        // Iterar sobre los datos y escribir en el archivo
+        foreach ($employees as $fila) {
+            fwrite($archivo_handle, implode("|", $fila) . "|\n");
+        }
+
+        Cerrar el archivo
+        fclose($archivo_handle);
+
+        // Forzar la descarga del archivo
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . basename($archivo) . '"');
+        header('Content-Length: ' . filesize($archivo));
+        readfile($archivo);
+        return view('employee.export');
     }
 }

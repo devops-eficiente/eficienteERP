@@ -51,7 +51,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="#" class="menu-link">
+                        <a href="{{route('admin.export_rfc')}}" class="menu-link">
                             <span class="menu-text">Verificar Empleados</span>
                         </a>
                     </li>
