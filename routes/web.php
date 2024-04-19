@@ -23,6 +23,7 @@ Route::prefix('empleados')->name('admin.')->middleware('auth')->group(function()
     Route::get('/verificacion_masiva',[EmployeeController::class,'export_rfc'])->name('export_rfc');
     Route::post('/agregar',[EmployeeController::class,'store'])->name('store_employee');
 
+    Route::post('importacion_masiva',[EmployeeController::class,'uploadZip'])->name('uploadZip');
     Route::post('subir_documento/{id}',[EmployeeController::class,'uploadDocument'])->name('uploadDocument');
     Route::post('subir_datos/{id}',[EmployeeController::class,'checkCIF'])->name('check_rfc');
 

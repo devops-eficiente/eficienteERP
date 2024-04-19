@@ -41,6 +41,11 @@ class Employee extends Model
     {
         return $this->belongsTo(MaritalStatus::class);
     }
+
+    public function tax_regimes(){
+        return $this->belongsToMany(TaxRegime::class);
+    }
+
     protected $casts = [
         'contacts' => 'array',
         'emergency_contacts' => 'array',

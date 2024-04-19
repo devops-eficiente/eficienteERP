@@ -47,12 +47,27 @@
                     </li>
                     <li class="menu-item">
                         <a href="{{route('admin.employees')}}" class="menu-link">
-                            <span class="menu-text">Ver todos</span>
+                            <span class="menu-text">Ver plantilla</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_group_fill"></i></span>
+                    <span class="menu-text"> Clientes </span>
+                    <span class="menu-arrow"></span>
+                </a>
+
+                <ul class="sub-menu hidden">
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <span class="menu-text">Crear cliente</span>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{route('admin.export_rfc')}}" class="menu-link">
-                            <span class="menu-text">Verificar Empleados</span>
+                        <a href="#" class="menu-link">
+                            <span class="menu-text">Ver plantilla</span>
                         </a>
                     </li>
                 </ul>

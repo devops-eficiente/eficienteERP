@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use PhpCfdi\CsfScraper\Scraper;
 use PhpCfdi\Rfc\Rfc;
 use Smalot\PdfParser\Parser;
+use ZipArchive;
 
 class EmployeeController extends Controller
 {
@@ -64,6 +65,7 @@ class EmployeeController extends Controller
             $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
             $persona = json_encode($person);
             $persona = json_decode($persona);
+            return $persona;
             $employee = Employee::find($id);
             Session::put('employee', $employee);
             Session::put('persona', $persona);
@@ -168,10 +170,13 @@ class EmployeeController extends Controller
     public function export_rfc()
     {
         // Datos que deseas exportar
-        $employees = Employee::select(
-            'rfc','curp'
-        )->get();
-        // $datos = [['Nombre', 'Edad', 'Correo electrónico'], ['Juan', 25, 'juan@example.com'], ['María', 30, 'maria@example.com'], ['Pedro', 28, 'pedro@example.com']];
+        $employees = Employee::get()->map(function ($employee) {
+            return [
+                'rfc' => $employee->id,
+                'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
+                'zip_code',
+            ];
+        });
 
         // Nombre del archivo de texto
         $archivo = 'datos.txt';
@@ -182,17 +187,81 @@ class EmployeeController extends Controller
 
         // Iterar sobre los datos y escribir en el archivo
         foreach ($employees as $fila) {
-            fwrite($archivo_handle, implode("|", $fila) . "|\n");
+            fwrite($archivo_handle, implode('|', $fila) . "|\n");
         }
 
         // Cerrar el archivo
         fclose($archivo_handle);
 
-        // Forzar la descarga del archivo
+        // Descarga del archivo
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . basename($archivo) . '"');
         header('Content-Length: ' . filesize($archivo));
         readfile($archivo);
         return view('employee.export');
+    }
+    public function uploadZip(Request $request)
+    {
+        //public_path('eficiente/zip/CUHC990830HCSRTR06.zip')
+        $zipFilePath = $request->file('zip');
+        $extractPath = public_path('eficiente/extracted_files'); // Ruta donde se extraerán los archivos
+
+        $zip = new ZipArchive();
+        if ($zip->open($zipFilePath) === true) {
+            // Iterar sobre cada archivo dentro del ZIP
+
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                // Obtener información del archivo
+                $fileInfo = $zip->statIndex($i);
+                // Nombre del archivo dentro del ZIP
+                $fileName = $fileInfo['name'];
+
+                // Extraer el contenido del archivo a la ruta especificada
+                // echo "Extracted file path: $extractedFilePath\n";
+
+                if (pathinfo($fileName, PATHINFO_EXTENSION) === 'pdf') {
+                    $zip->extractTo($extractPath, $fileName);
+
+                    $extractedFilePath = $extractPath . '/' . $fileName;
+                    // unlink($extractedFilePath);
+                    try {
+                        $scraper = Scraper::create();
+                        $rutaDocumento = $extractedFilePath;
+                        $cif = $this->CIF($rutaDocumento);
+                        $rfc = Rfc::parse($this->RFC($rutaDocumento));
+                        $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
+                        $persona = json_encode($person);
+                        $persona = json_decode($persona);
+
+                        $resultados[$i]['respuesta'] = $persona;
+                        $resultados[$i]['status'] = true;
+
+                        if ($rfc->isFisica()) {
+                            $resultados[$i]['tipo'] = 'fisica';
+                        }
+
+                        if ($rfc->isMoral()) {
+                            $resultados[$i]['tipo'] = 'moral';
+                        }
+                    } catch (\Throwable $th) {
+                        $resultados[$i]['archivo'] = $fileName;
+                        $resultados[$i]['respuesta'] = 'Verificar archivo. Datos ilegibles o archivo invalido.';
+                        $resultados[$i]['status'] = false;
+                        $resultados[$i]['tipo'] = 'error';
+                    }
+                } else {
+                    $resultados[$i]['archivo'] = $fileName;
+                    $resultados[$i]['respuesta'] = 'Verificar archivo. No es un pdf';
+                    $resultados[$i]['status'] = false;
+                    $resultados[$i]['tipo'] = 'error';
+                }
+            }
+            // Cerrar el archivo ZIP
+            $zip->close();
+            return $resultados;
+        } else {
+            // Si no se puede abrir el archivo ZIP, maneja el error según sea necesario
+            return back()->with('denied','No se puede leer el archivo');
+        }
     }
 }

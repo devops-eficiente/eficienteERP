@@ -20,18 +20,19 @@ return new class extends Migration
             $table->string('zip_code',5)->nullable()->comment('Codigo Postal');
             $table->string('curp')->comment('CURP Empleado');
             $table->string('rfc')->comment('RFC Empleado');
-            $table->foreignId('institute_health_id')->constrained()->comment('Instituto de salud');
+            $table->foreignId('institute_health_id')->nullable()->constrained()->comment('Instituto de salud');
             $table->string('nss')->comment('NSS Empleado');
-            $table->foreignId('identification_employee_id')->constrained()->comment('Identificacion');
+            $table->foreignId('identification_employee_id')->nullable()->constrained()->comment('Identificacion');
             $table->string('n_identification')->comment('Numero de identificacion');
             $table->enum('gender',['Hombre','Mujer','Otro'])->default('Otro');
             $table->enum('nationality',['Mexicana','Extrangera'])->default('Mexicana');
             $table->date('birthdate')->comment('Fecha de nacimiento');
             $table->json('contacts')->comment('Medios de contacto');
             $table->json('emergency_contacts')->comment('Medios de contacto');
-            $table->foreignId('blood_type_id')->constrained()->comment('Tipo de sangre');
-            $table->foreignId('marital_status_id')->constrained('marital_status')->comment('Estado civil');
+            $table->foreignId('blood_type_id')->nullable()->constrained()->comment('Tipo de sangre');
+            $table->foreignId('marital_status_id')->nullable()->constrained('marital_status')->comment('Estado civil');
             $table->boolean('rfc_verified')->default(0)->comment('Verificación RFC');
+            $table->boolean('complete');
             $table->timestamps();
         });
     }

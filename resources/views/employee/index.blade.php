@@ -18,35 +18,58 @@
             </div>
         </div>
     </div>
+    <div class="flex flex-col md:flex-row my-4 justify-around items-center w-full">
+        <button type="button" class="btn bg-secondary text-white">
+            Validacion masiva
+        </button>
+
+        @livewire('employee.upload-zip')
+
+        @livewire('employee.validation-rfc')
+
+    </div>
     <div class="card">
         <div class="card-header">
+
             <div class="flex justify-between items-center">
                 <h4 class="card-title">Empleados</h4>
             </div>
         </div>
         <div class="p-6">
-            <div class="overflow-x-auto">
+            <div class="overflow-y-auto overflow-x-auto">
                 <div class="min-w-full inline-block align-middle">
                     <div class="overscroll-y-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 overscroll-y-auto">
                             <thead>
                                 <tr>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">N. Empleado
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        N. Empleado
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">CURP</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">RFC</th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nacimiento
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Nombre
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Genero</th>
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        CURP
+                                    </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Accion</th>
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        RFC
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Observaciones
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        Genero
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
+                                        Accion
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
@@ -66,7 +89,7 @@
                                         @if (!$employee->rfc_verified)
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
                                                 {{ $employee->rfc }}
-                                                @livewire('employee.upload-document', ['employee' => $employee])
+
                                             </td>
                                         @else
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-800 ">
@@ -78,20 +101,22 @@
                                             </td>
                                         @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $employee->birthdate }}
+                                            {{ $employee->comments ?? 'N/A'}}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
                                             {{ $employee->gender }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                            {{-- @if (!$employee->rfc_verified)
-                                                <a class="text-primary hover:text-sky-700" href="#">
-                                                    Verificar RFC
-                                                </a>
-                                            @endif --}}
-                                            <a class="text-success hover:text-sky-700" href="#">
-                                                Ver
-                                            </a>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                            <div class="flex flex-col gap-4">
+                                                @if (!$employee->rfc_verified)
+                                                    @livewire('employee.upload-document', ['employee' => $employee])
+                                                @endif
+                                                <div>
+                                                    <a class="text-success hover:text-sky-700" href="#">
+                                                        Ver
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
