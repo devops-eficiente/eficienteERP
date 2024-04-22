@@ -232,7 +232,7 @@ class EmployeeController extends Controller
                         $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
                         $persona = json_encode($person);
                         $persona = json_decode($persona);
-
+                        $resultados[$i]['archivo'] = $fileName;
                         $resultados[$i]['respuesta'] = $persona;
                         $resultados[$i]['status'] = true;
 
