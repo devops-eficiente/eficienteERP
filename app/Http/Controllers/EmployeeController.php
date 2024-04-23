@@ -120,38 +120,44 @@ class EmployeeController extends Controller
         }
     }
 
-    public function export_rfc()
+    public function export_rfc(Request $request)
     {
-        // Datos que deseas exportar
-        $employees = Employee::get()->map(function ($employee) {
+        $allEmployees = Employee::get()->map(function ($employee) {
             return [
-                'rfc' => $employee->id,
+                'rfc' => $employee->rfc,
                 'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
-                'zip_code',
+                'zip_code' => $employee->zip_code,
             ];
         });
 
-        // Nombre del archivo de texto
-        $archivo = 'datos.txt';
-        $employees = $employees->toArray();
+        // Dividir los empleados en lotes de 500
+        $batchSize = 2;
+        $employeeBatches = collect();
+        foreach ($allEmployees->chunk($batchSize) as $batch) {
+            $employeeBatches->push($batch);
+        }
+        // return $employeeBatches;
+        // Iterar sobre cada lote y exportarlo a un archivo de texto
+        foreach ($employeeBatches as $batchIndex => $employees) {
+            $batchArchivo = 'empleados_' . ($batchIndex + 1) . '.txt';
+            // Abrir el archivo en modo escritura
+            ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
 
-        // Abrir el archivo en modo escritura
-        ($archivo_handle = fopen($archivo, 'w')) or die('No se puede abrir el archivo.');
+            // Iterar sobre los datos y escribir en el archivo
+            foreach ($employees as $index => $fila) {
+                fwrite($archivo_handle, $index + 1 . '|' . implode('|', $fila) . "|\n");
+            }
 
-        // Iterar sobre los datos y escribir en el archivo
-        foreach ($employees as $fila) {
-            fwrite($archivo_handle, implode('|', $fila) . "|\n");
+            // Cerrar el archivo
+            fclose($archivo_handle);
+
+            // Descarga del archivo
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . basename($batchArchivo) . '"');
+            header('Content-Length: ' . filesize($batchArchivo));
+            readfile($batchArchivo);
         }
 
-        // Cerrar el archivo
-        fclose($archivo_handle);
-
-        // Descarga del archivo
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . basename($archivo) . '"');
-        header('Content-Length: ' . filesize($archivo));
-        readfile($archivo);
-        return view('employee.export');
     }
 
     public function uploadZip(Request $request)
@@ -306,19 +312,19 @@ class EmployeeController extends Controller
                     'telephone' => '',
                 ],
                 'emergency_contacts' => '',
-                'rfc_verified' => 1
+                'rfc_verified' => 1,
             ]);
-            foreach($person->regimenes as $regimen){
-                $taxRegime = TaxRegime::where('code',$regimen->regimen_id)->first();
-                if($taxRegime){
-                    if(isset($regimen->fecha_baja)){
+            foreach ($person->regimenes as $regimen) {
+                $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
+                if ($taxRegime) {
+                    if (isset($regimen->fecha_baja)) {
                         $status = 0;
                         $end_date = Carbon::parse($regimen->fecha_baja->date)->format('Y-m-d');
-                    }else{
+                    } else {
                         $status = 1;
                         $end_date = null;
                     }
-                    $employee->tax_regimes()->attach($taxRegime->id,[
+                    $employee->tax_regimes()->attach($taxRegime->id, [
                         'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
                         'end_date' => $end_date,
                         'status' => $status,
@@ -345,20 +351,20 @@ class EmployeeController extends Controller
                 'state' => $person->entidad_federativa,
                 'city' => $person->municipio_delegacion,
                 'rfc_data' => $person,
-                'rfc_verified' => 1
+                'rfc_verified' => 1,
             ]);
 
-            foreach($person->regimenes as $regimen){
-                $taxRegime = TaxRegime::where('code',$regimen->regimen_id)->first();
-                if($taxRegime){
-                    if(isset($regimen->fecha_baja)){
+            foreach ($person->regimenes as $regimen) {
+                $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
+                if ($taxRegime) {
+                    if (isset($regimen->fecha_baja)) {
                         $status = 0;
                         $end_date = Carbon::parse($regimen->fecha_baja->date)->format('Y-m-d');
-                    }else{
+                    } else {
                         $status = 1;
                         $end_date = null;
                     }
-                    $client->tax_regimes()->attach($taxRegime->id,[
+                    $client->tax_regimes()->attach($taxRegime->id, [
                         'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
                         'end_date' => $end_date,
                         'status' => $status,
@@ -369,7 +375,7 @@ class EmployeeController extends Controller
             Contact::create([
                 'client_id' => $client->id,
                 'email' => $person->correo_electronico,
-                'phone' => ''
+                'phone' => '',
             ]);
             Address::create([
                 'client_id' => $client->id,
@@ -386,5 +392,9 @@ class EmployeeController extends Controller
             // return $th->getMessage();
         }
         // return true;
+    }
+    public function validationRfc()
+    {
+        return view('employee.validationEmployee');
     }
 }

@@ -19,14 +19,10 @@
         </div>
     </div>
     <div class="flex flex-col md:flex-row my-4 justify-around items-center w-full">
-        <button type="button" class="btn bg-secondary text-white">
+        <a href="{{route('admin.validationRfc')}}" class="btn bg-secondary text-white">
             Validacion masiva
-        </button>
-
+        </a>
         @livewire('employee.upload-zip')
-
-        @livewire('employee.validation-rfc')
-
     </div>
     <div class="card">
         <div class="card-header">
@@ -61,10 +57,6 @@
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                         Observaciones
-                                    </th>
-                                    <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                        Genero
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
@@ -102,9 +94,6 @@
                                         @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
                                             {{ $employee->comments ?? 'N/A'}}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $employee->gender }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <div class="flex flex-col gap-4">

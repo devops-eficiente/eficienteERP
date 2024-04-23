@@ -21,7 +21,8 @@ Route::get('/',[AdminController::class,'index'])->middleware('auth')->name('inde
 Route::controller(EmployeeController::class)->prefix('empleados')->name('admin.')->middleware('auth')->group(function(){
     Route::get('/','index')->name('employees');
     Route::get('/crear','create')->name('create_employee');
-    Route::get('/verificacion_masiva','export_rfc')->name('export_rfc');
+    Route::get('/exportacion_masiva','export_rfc')->name('export_rfc');
+    Route::get('/validacion_masiva','validationRfc')->name('validationRfc');
     Route::post('/agregar','store')->name('store_employee');
 
     Route::post('importacion_masiva','uploadZip')->name('uploadZip');
@@ -34,5 +35,6 @@ Route::controller(EmployeeController::class)->prefix('empleados')->name('admin.'
 
 Route::controller(ClientController::class)->prefix('clientes')->name('admin.')->middleware('auth')->group(function(){
     Route::get('/','index')->name('clients');
+
 })
 ;

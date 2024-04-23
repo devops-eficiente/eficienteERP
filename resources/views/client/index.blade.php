@@ -19,9 +19,9 @@
         </div>
     </div>
     <div class="flex flex-col md:flex-row my-4 justify-around items-center w-full">
-        <button type="button" class="btn bg-secondary text-white">
+        {{-- <button type="button" class="btn bg-secondary text-white">
             Validacion masiva
-        </button>
+        </button> --}}
 
         @livewire('employee.upload-zip')
 

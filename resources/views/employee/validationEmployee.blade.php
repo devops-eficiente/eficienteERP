@@ -18,24 +18,5 @@
             </div>
         </div>
     </div>
-    <div class="card">
-        <div class="card-header">
-            <div class="flex justify-between items-center">
-                <h4 class="card-title">Verificacion masiva de empleados</h4>
-            </div>
-        </div>
-        <div class="p-6">
-
-        </div>
-    </div>
-    {{--
-        <div class="flex justify-around my-3">
-            <a href="{{ route('admin.employees') }}" class="btn bg-secondary text-white">Regresar</a>
-            @if ($cont == 0)
-                <a href="{{ route('admin.continue_employee') }}" class="btn bg-success text-white">Continuar</a>
-            @else
-                <a href="{{ route('admin.edit_data_employee') }}" class="btn bg-warning text-white">Corregir errores</a>
-            @endif
-        </div>
-    --}}
+    @livewire('employee.validation-rfc')
 @endsection
