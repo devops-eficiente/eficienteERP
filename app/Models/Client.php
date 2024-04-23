@@ -10,6 +10,10 @@ class Client extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $casts = [
+        'rfc_data' => 'array'
+    ];
+
     public function address(){
         return $this->hasMany(Address::class);
     }
@@ -17,6 +21,6 @@ class Client extends Model
         return $this->hasMany(Contact::class);
     }
     public function tax_regimes(){
-        return $this->belongsToMany(TaxRegime::class);
+        return $this->belongsToMany(TaxRegime::class)->withPivot('status','end_date','start_date');;
     }
 }

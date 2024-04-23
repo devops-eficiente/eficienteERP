@@ -12,9 +12,9 @@ class TaxRegime extends Model
     protected $guarded = [];
 
     public function clients(){
-        return $this->belongsToMany(Client::class);
+        return $this->belongsToMany(Client::class)->withPivot('status','end_date','start_date');;
     }
     public function employees(){
-        return $this->belongsToMany(Employee::class);
+        return $this->belongsToMany(Employee::class)->withPivot('status','end_date','start_date');;
     }
 }

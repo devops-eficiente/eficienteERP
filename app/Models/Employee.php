@@ -43,12 +43,13 @@ class Employee extends Model
     }
 
     public function tax_regimes(){
-        return $this->belongsToMany(TaxRegime::class);
+        return $this->belongsToMany(TaxRegime::class)->withPivot('status','end_date','start_date');
     }
 
     protected $casts = [
         'contacts' => 'array',
         'emergency_contacts' => 'array',
+        'rfc_data' => 'array'
     ];
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,16 +18,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[AdminController::class,'index'])->middleware('auth')->name('index');
 
-Route::prefix('empleados')->name('admin.')->middleware('auth')->group(function(){
-    Route::get('/',[EmployeeController::class,'index'])->name('employees');
-    Route::get('/crear',[EmployeeController::class,'create'])->name('create_employee');
-    Route::get('/verificacion_masiva',[EmployeeController::class,'export_rfc'])->name('export_rfc');
-    Route::post('/agregar',[EmployeeController::class,'store'])->name('store_employee');
+Route::controller(EmployeeController::class)->prefix('empleados')->name('admin.')->middleware('auth')->group(function(){
+    Route::get('/','index')->name('employees');
+    Route::get('/crear','create')->name('create_employee');
+    Route::get('/verificacion_masiva','export_rfc')->name('export_rfc');
+    Route::post('/agregar','store')->name('store_employee');
 
-    Route::post('importacion_masiva',[EmployeeController::class,'uploadZip'])->name('uploadZip');
-    Route::post('subir_documento/{id}',[EmployeeController::class,'uploadDocument'])->name('uploadDocument');
-    Route::post('subir_datos/{id}',[EmployeeController::class,'checkCIF'])->name('check_rfc');
+    Route::post('importacion_masiva','uploadZip')->name('uploadZip');
+    Route::post('subir_documento/{id}','uploadDocument')->name('uploadDocument');
+    Route::post('subir_datos/{id}','checkCIF')->name('check_rfc');
 
-    Route::get('subir_documento/continue',[EmployeeController::class,'continue'])->name('continue_employee');
-    Route::get('subir_documento/edit',[EmployeeController::class,'edit_data'])->name('edit_data_employee');
+    Route::get('subir_documento/continue','continue')->name('continue_employee');
+    Route::get('subir_documento/edit','edit_data')->name('edit_data_employee');
 });
+
+Route::controller(ClientController::class)->prefix('clientes')->name('admin.')->middleware('auth')->group(function(){
+    Route::get('/','index')->name('clients');
+})
+;

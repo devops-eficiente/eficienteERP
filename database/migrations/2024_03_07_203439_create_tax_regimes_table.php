@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('code')->comment('Codigo de regimen');
             $table->string('name')->comment('Nombre de regimen');
-            $table->string('start_date')->comment('Fecha de inicio de vigencia');
             $table->boolean('moral')->comment('Aplica para Moral');
             $table->boolean('fisica')->comment('Aplica para Fisica');
+            $table->string('start_date')->comment('Fecha de inicio de vigencia');
             $table->timestamps();
         });
     }

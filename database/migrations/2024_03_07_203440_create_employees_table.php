@@ -32,7 +32,8 @@ return new class extends Migration
             $table->foreignId('blood_type_id')->nullable()->constrained()->comment('Tipo de sangre');
             $table->foreignId('marital_status_id')->nullable()->constrained('marital_status')->comment('Estado civil');
             $table->boolean('rfc_verified')->default(0)->comment('Verificación RFC');
-            $table->boolean('complete');
+            $table->boolean('complete')->default(0)->comment('Perfil completo');
+            $table->json('rfc_data')->nullable()->comment('Respuesta archivo RFC');
             $table->timestamps();
         });
     }

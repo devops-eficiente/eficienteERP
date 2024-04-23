@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeeStoreRequest;
+use App\Models\Address;
 use App\Models\BloodType;
+use App\Models\Client;
+use App\Models\Contact;
 use App\Models\Employee;
 use App\Models\IdentificationEmployee;
 use App\Models\InstituteHealth;
 use App\Models\MaritalStatus;
+use App\Models\TaxRegime;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -60,59 +65,13 @@ class EmployeeController extends Controller
         try {
             $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
-            $cif = $this->CIF($rutaDocumento);
-            $rfc = Rfc::parse($this->RFC($rutaDocumento));
-            $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
-            $persona = json_encode($person);
-            $persona = json_decode($persona);
-            return $persona;
+            $persona = $this->readPdf($rutaDocumento);
             $employee = Employee::find($id);
             Session::put('employee', $employee);
             Session::put('persona', $persona);
             return view('employee.verified', compact('employee', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
-        }
-    }
-
-    public function CIF($path)
-    {
-        $parser = new Parser();
-        try {
-            $documento = $parser->parseFile($path); // Parsear el documento PDF
-            $textoCompleto = $documento->getText(); // Obtener el texto completo del PDF
-            $cadenaBuscada = 'idCIF:'; // Búsqueda de datos específicos
-            $posicion = strpos($textoCompleto, $cadenaBuscada);
-            if ($posicion !== false) {
-                $idCIF = substr($textoCompleto, $posicion, 18);
-                $items = explode(': ', $idCIF);
-                return $items[1];
-            } else {
-                return 'La cadena especificada no se encontró en el PDF.';
-            }
-        } catch (\Exception $e) {
-            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
-        }
-    }
-
-    public function RFC($path)
-    {
-        $parser = new Parser();
-        try {
-            $documento = $parser->parseFile($path);
-            $textoCompleto = $documento->getText();
-            $cadenaBuscada = 'RFC:';
-            $posicion = strpos($textoCompleto, $cadenaBuscada);
-
-            if ($posicion !== false) {
-                $idCIF = substr($textoCompleto, $posicion, 18);
-                $items = explode(":\t", $idCIF);
-                return $items[1];
-            } else {
-                return 'La cadena especificada no se encontró en el PDF.';
-            }
-        } catch (\Exception $e) {
-            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
         }
     }
 
@@ -151,13 +110,7 @@ class EmployeeController extends Controller
         Session::forget('employee');
         Session::forget('persona');
         try {
-            $scraper = Scraper::create();
-
-            $rfc = Rfc::parse($request->rfc);
-
-            $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $request->cif);
-            $persona = json_encode($person);
-            $persona = json_decode($persona);
+            $persona = $this->checkRFC($request->rfc, $request->cif);
             $employee = Employee::find($id);
             Session::put('employee', $employee);
             Session::put('persona', $persona);
@@ -200,6 +153,7 @@ class EmployeeController extends Controller
         readfile($archivo);
         return view('employee.export');
     }
+
     public function uploadZip(Request $request)
     {
         //public_path('eficiente/zip/CUHC990830HCSRTR06.zip')
@@ -207,6 +161,7 @@ class EmployeeController extends Controller
         $extractPath = public_path('eficiente/extracted_files'); // Ruta donde se extraerán los archivos
 
         $zip = new ZipArchive();
+        $extractPath = $extractPath . '/' . uniqid();
         if ($zip->open($zipFilePath) === true) {
             // Iterar sobre cada archivo dentro del ZIP
 
@@ -218,50 +173,218 @@ class EmployeeController extends Controller
 
                 // Extraer el contenido del archivo a la ruta especificada
                 // echo "Extracted file path: $extractedFilePath\n";
-
+                $path = $extractPath . '/' . uniqid();
                 if (pathinfo($fileName, PATHINFO_EXTENSION) === 'pdf') {
-                    $zip->extractTo($extractPath, $fileName);
+                    $zip->extractTo($path, $fileName);
 
-                    $extractedFilePath = $extractPath . '/' . $fileName;
+                    $extractedFilePath = $path . '/' . $fileName;
                     // unlink($extractedFilePath);
                     try {
-                        $scraper = Scraper::create();
                         $rutaDocumento = $extractedFilePath;
-                        $cif = $this->CIF($rutaDocumento);
-                        $rfc = Rfc::parse($this->RFC($rutaDocumento));
-                        $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
-                        $persona = json_encode($person);
-                        $persona = json_decode($persona);
-                        $resultados[$i]['archivo'] = $fileName;
-                        $resultados[$i]['respuesta'] = $persona;
-                        $resultados[$i]['status'] = true;
-
-                        if ($rfc->isFisica()) {
-                            $resultados[$i]['tipo'] = 'fisica';
+                        $persona = $this->readPdf($rutaDocumento);
+                        // return Carbon::parse($persona->regimenes[0]->fecha_alta->date)->format('Y-m-d');
+                        // return date('Y-m-d',$persona->regimenes[0]->fecha_alta->date);
+                        // return 'hola';
+                        // foreach($persona->regimenes as $regimen){
+                        //     return date('Y-m-d',$regimen->fecha_alta->date);
+                        //     return $regimen->fecha_alta->date;
+                        // }
+                        if ($persona->tipo == 'fisica') {
+                            $this->personaFisica($persona);
+                        } else {
+                            $this->personaMoral($persona);
                         }
-
-                        if ($rfc->isMoral()) {
-                            $resultados[$i]['tipo'] = 'moral';
-                        }
+                        unlink($extractedFilePath);
                     } catch (\Throwable $th) {
                         $resultados[$i]['archivo'] = $fileName;
-                        $resultados[$i]['respuesta'] = 'Verificar archivo. Datos ilegibles o archivo invalido.';
+                        $resultados[$i]['valor'] = 'Verificar archivo. Datos ilegibles o archivo invalido.';
                         $resultados[$i]['status'] = false;
-                        $resultados[$i]['tipo'] = 'error';
+                        unlink($extractedFilePath);
                     }
                 } else {
                     $resultados[$i]['archivo'] = $fileName;
-                    $resultados[$i]['respuesta'] = 'Verificar archivo. No es un pdf';
+                    $resultados[$i]['valor'] = 'Verificar archivo. No es un pdf';
                     $resultados[$i]['status'] = false;
-                    $resultados[$i]['tipo'] = 'error';
                 }
             }
             // Cerrar el archivo ZIP
             $zip->close();
-            return $resultados;
+            return back()->with('success', 'Archivo ejecutado correctamente');
         } else {
             // Si no se puede abrir el archivo ZIP, maneja el error según sea necesario
-            return back()->with('denied','No se puede leer el archivo');
+            return back()->with('denied', 'No se puede leer el archivo');
         }
+    }
+
+    public function readPdf($path)
+    {
+        $rutaDocumento = $path;
+        $cif = $this->searchCIF($rutaDocumento);
+        $rfc = $this->searchRFC($rutaDocumento);
+        return $this->checkRFC($rfc, $cif);
+    }
+
+    public function checkRFC($rfc, $cif)
+    {
+        $scraper = Scraper::create();
+        $rfc = Rfc::parse($rfc);
+        $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
+        $persona = json_encode($person);
+        $persona = json_decode($persona);
+        $data = $persona;
+        if ($rfc->isFisica()) {
+            $data->tipo = 'fisica';
+        }
+        if ($rfc->isMoral()) {
+            $data->tipo = 'moral';
+        }
+        return $data;
+    }
+
+    public function searchCIF($path)
+    {
+        $parser = new Parser();
+        try {
+            $documento = $parser->parseFile($path); // Parsear el documento PDF
+            $textoCompleto = $documento->getText(); // Obtener el texto completo del PDF
+            $cadenaBuscada = 'idCIF:'; // Búsqueda de datos específicos
+            $posicion = strpos($textoCompleto, $cadenaBuscada);
+            if ($posicion !== false) {
+                $idCIF = substr($textoCompleto, $posicion, 18);
+                $items = explode(': ', $idCIF);
+                return $items[1];
+            } else {
+                return 'La cadena especificada no se encontró en el PDF.';
+            }
+        } catch (\Exception $e) {
+            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+        }
+    }
+
+    public function searchRFC($path)
+    {
+        $parser = new Parser();
+        try {
+            $documento = $parser->parseFile($path);
+            $textoCompleto = $documento->getText();
+            $cadenaBuscada = 'RFC:';
+            $posicion = strpos($textoCompleto, $cadenaBuscada);
+
+            if ($posicion !== false) {
+                $idCIF = substr($textoCompleto, $posicion, 18);
+                $items = explode(":\t", $idCIF);
+                return $items[1];
+            } else {
+                return 'La cadena especificada no se encontró en el PDF.';
+            }
+        } catch (\Exception $e) {
+            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+        }
+    }
+
+    public function personaFisica($person)
+    {
+        try {
+            DB::beginTransaction();
+            $ult = Employee::max('id') + 1;
+            $employee = Employee::create([
+                'n_employee' => 'E' . $ult,
+                'paternal_surname' => $person->apellido_paterno,
+                'maternal_surname' => $person->apellido_materno,
+                'name' => $person->nombre,
+                'zip_code' => $person->codigo_postal,
+                'curp' => $person->curp,
+                'rfc' => $person->rfc,
+                'nss' => '',
+                'n_identification' => '',
+                'gender' => 'Otro',
+                'nationality' => 'Mexicana',
+                'birthdate' => $person->fecha_nacimiento->date,
+                'rfc_data' => $person,
+                'contacts' => [
+                    'email' => $person->correo_electronico,
+                    'telephone' => '',
+                ],
+                'emergency_contacts' => '',
+                'rfc_verified' => 1
+            ]);
+            foreach($person->regimenes as $regimen){
+                $taxRegime = TaxRegime::where('code',$regimen->regimen_id)->first();
+                if($taxRegime){
+                    if(isset($regimen->fecha_baja)){
+                        $status = 0;
+                        $end_date = Carbon::parse($regimen->fecha_baja->date)->format('Y-m-d');
+                    }else{
+                        $status = 1;
+                        $end_date = null;
+                    }
+                    $employee->tax_regimes()->attach($taxRegime->id,[
+                        'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
+                        'end_date' => $end_date,
+                        'status' => $status,
+                    ]);
+                }
+            }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+        }
+    }
+
+    public function personaMoral($person)
+    {
+        try {
+            DB::beginTransaction();
+            $client = Client::create([
+                'company_name' => $person->razon_social,
+                'capital_regime' => $person->regimen_de_capital,
+                'rfc' => $person->rfc,
+                'start_date' => $person->fecha_inicio_operaciones->date,
+                'status' => $person->situacion_contribuyente == 'ACTIVO' ? 1 : 0,
+                'updated_date' => $person->fecha_ultimo_cambio_situacion->date,
+                'state' => $person->entidad_federativa,
+                'city' => $person->municipio_delegacion,
+                'rfc_data' => $person,
+                'rfc_verified' => 1
+            ]);
+
+            foreach($person->regimenes as $regimen){
+                $taxRegime = TaxRegime::where('code',$regimen->regimen_id)->first();
+                if($taxRegime){
+                    if(isset($regimen->fecha_baja)){
+                        $status = 0;
+                        $end_date = Carbon::parse($regimen->fecha_baja->date)->format('Y-m-d');
+                    }else{
+                        $status = 1;
+                        $end_date = null;
+                    }
+                    $client->tax_regimes()->attach($taxRegime->id,[
+                        'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
+                        'end_date' => $end_date,
+                        'status' => $status,
+                    ]);
+                }
+            }
+
+            Contact::create([
+                'client_id' => $client->id,
+                'email' => $person->correo_electronico,
+                'phone' => ''
+            ]);
+            Address::create([
+                'client_id' => $client->id,
+                'zip_code' => $person->codigo_postal,
+                'road_type' => $person->tipo_vialidad,
+                'road_name' => $person->nombre_vialidad,
+                'internal_number' => $person->numero_interior,
+                'external_number' => $person->numero_exterior,
+                'suburb' => $person->colonia,
+            ]);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            // return $th->getMessage();
+        }
+        // return true;
     }
 }

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             IdentificationEmployeeSeeder::class,
             InstituteHealthSeeder::class,
             MaritalStatusSeeder::class,
+            TaxRegimeSeeder::class,
         ]);
     }
 }
