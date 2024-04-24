@@ -434,7 +434,7 @@ class EmployeeController extends Controller
                         ]);
                     }else{
                         $employee->update([
-                            'comment' => $respuesta
+                            'comments' => $respuesta
                         ]);
                     }
                 }
