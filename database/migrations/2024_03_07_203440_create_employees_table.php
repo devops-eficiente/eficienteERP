@@ -34,6 +34,7 @@ return new class extends Migration
             $table->boolean('rfc_verified')->default(0)->comment('Verificación RFC');
             $table->boolean('complete')->default(0)->comment('Perfil completo');
             $table->json('rfc_data')->nullable()->comment('Respuesta archivo RFC');
+            $table->string('comments')->nullable()->comment('Comentarios del SAT');
             $table->timestamps();
         });
     }

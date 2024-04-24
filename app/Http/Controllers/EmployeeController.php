@@ -122,42 +122,51 @@ class EmployeeController extends Controller
 
     public function export_rfc(Request $request)
     {
-        $allEmployees = Employee::get()->map(function ($employee) {
-            return [
-                'rfc' => $employee->rfc,
-                'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
-                'zip_code' => $employee->zip_code,
-            ];
-        });
-
-        // Dividir los empleados en lotes de 500
-        $batchSize = 2;
-        $employeeBatches = collect();
-        foreach ($allEmployees->chunk($batchSize) as $batch) {
-            $employeeBatches->push($batch);
-        }
-        // return $employeeBatches;
-        // Iterar sobre cada lote y exportarlo a un archivo de texto
-        foreach ($employeeBatches as $batchIndex => $employees) {
-            $batchArchivo = 'empleados_' . ($batchIndex + 1) . '.txt';
-            // Abrir el archivo en modo escritura
-            ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
-
-            // Iterar sobre los datos y escribir en el archivo
-            foreach ($employees as $index => $fila) {
-                fwrite($archivo_handle, $index + 1 . '|' . implode('|', $fila) . "|\n");
-            }
-
-            // Cerrar el archivo
-            fclose($archivo_handle);
-
-            // Descarga del archivo
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . basename($batchArchivo) . '"');
-            header('Content-Length: ' . filesize($batchArchivo));
-            readfile($batchArchivo);
+        if ($request->opcion == 'rfc_invalid') {
+            $employees = Employee::where('rfc_verified', 0)
+                ->get()
+                ->map(function ($employee) {
+                    return [
+                        'rfc' => $employee->rfc,
+                        'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
+                        'zip_code' => $employee->zip_code,
+                    ];
+                });
+        } elseif ($request->opcion == 'all_active') {
+            $employees = Employee::get()->map(function ($employee) {
+                return [
+                    'rfc' => $employee->rfc,
+                    'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
+                    'zip_code' => $employee->zip_code,
+                ];
+            });
+        } elseif ($request->opcion == 'all') {
+            $employees = Employee::get()->map(function ($employee) {
+                return [
+                    'rfc' => $employee->rfc,
+                    'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
+                    'zip_code' => $employee->zip_code,
+                ];
+            });
         }
 
+        $batchArchivo = 'empleados.txt';
+        // Abrir el archivo en modo escritura
+        ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
+
+        // Iterar sobre los datos y escribir en el archivo
+        foreach ($employees as $index => $fila) {
+            fwrite($archivo_handle, $index + 1 . '|' . implode('|', $fila) . "|\n");
+        }
+
+        // Cerrar el archivo
+        fclose($archivo_handle);
+
+        // Descarga del archivo
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . basename($batchArchivo) . '"');
+        header('Content-Length: ' . filesize($batchArchivo));
+        readfile($batchArchivo);
     }
 
     public function uploadZip(Request $request)
@@ -396,5 +405,46 @@ class EmployeeController extends Controller
     public function validationRfc()
     {
         return view('employee.validationEmployee');
+    }
+    public function uploadResponseSat(Request $request)
+    {
+        header('Content-Type: text/html; charset=UTF-8');
+        // Nombre del archivo de texto
+        $archivo = $request->file('archivo');
+
+        // Abrir el archivo en modo lectura
+        $gestor = fopen($archivo, 'r');
+
+        // Verificar si se pudo abrir el archivo
+        if ($gestor) {
+            // Leer el archivo línea por línea
+            while (($linea = fgets($gestor)) !== false) {
+                // Dividir la línea en partes usando el separador '|'
+                // $datos = explode('|', $linea);
+                $datos = explode('|', wordwrap(utf8_decode($linea), 100, '|'));
+
+                $rfc = trim($datos[1]);
+
+                $respuesta = trim($datos[4]); // Código Postal
+                $employee = Employee::where('rfc',$rfc)->first();
+                if($employee){
+                    if (strpos($respuesta, 'RFC v?lido') !== false) {
+                        $employee->update([
+                            'rfc_verified' => 1
+                        ]);
+                    }else{
+                        $employee->update([
+                            'comment' => $respuesta
+                        ]);
+                    }
+                }
+            }
+
+            // Cerrar el archivo
+            fclose($gestor);
+        } else {
+            // Manejar el caso en que no se pudo abrir el archivo
+            return back()->with('denied','No se pudo leer el archivo');
+        }
     }
 }

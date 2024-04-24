@@ -74,44 +74,92 @@
                     </div>
                 @endif
                 @if ($step == 2)
-                    <div class="flex items-center text-center">
-                        <h4 class="card-title">
-                            Descarga de archivos
-                        </h4>
-                    </div>
-                    <div class="flex items-center text-center">
-                        <p>
-                            Descarga los archivos que se usaran para validarlo en el sitio del SAT. Despues de
-                            descargarlos da clic en siguiente.
-                        </p>
-                    </div>
-
-
                     <div class="w-full justify-center items-center flex">
+
+
                         <div
-                            class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            <button aria-current="true" type="button"
-                                class="w-full px-4 py-2 font-medium text-left rtl:text-right text-white bg-blue-700 border-b border-gray-200 rounded-t-lg cursor-pointer focus:outline-none dark:bg-gray-800 dark:border-gray-600">
-                                Profile
-                            </button>
-                            <button type="button"
-                                class="w-full px-4 py-2 font-medium text-left rtl:text-right border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
-                                Settings
-                            </button>
-                            <button type="button"
-                                class="w-full px-4 py-2 font-medium text-left rtl:text-right border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white">
-                                Messages
-                            </button>
-                            <button disabled type="button"
-                                class="w-full px-4 py-2 font-medium text-left rtl:text-right bg-gray-100 rounded-b-lg cursor-not-allowed dark:bg-gray-600 dark:text-gray-400">
-                                Download
-                            </button>
+                            class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                            <a href="{{ route('admin.export_rfc', ['opcion' => $option]) }}">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                    Descarga de archivos
+                                </h5>
+                            </a>
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                                Descarga los archivos que se usaran para validarlo en el sitio del SAT. Despues de
+                                descargarlos da clic en siguiente.
+                            </p>
+                            <a href="{{ route('admin.export_rfc', ['opcion' => $option]) }}"
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Descargar
+                            </a>
                         </div>
+
                     </div>
                 @endif
                 @if ($step == 3)
+                    <div class="w-full justify-center items-center flex">
+                        <div
+                            class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                            <a href="https://agsc.siat.sat.gob.mx/PTSC/ValidaRFC/index.jsf">
+                                <img class="rounded-t-lg" src="{{ asset('eficiente/logos/sat.jpg') }}"
+                                    alt="" />
+                            </a>
+                            <div class="p-5">
+                                <a href="#">
+                                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                        Ingresa al portal del SAT
+                                    </h5>
+                                </a>
+                                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                                    En este paso debes ingresar al portal del SAT. Elegir la opcion de validacion masiva
+                                    y seguir con los pasos que se indiquen en la pagina.
+                                    Una vez validado y obtenido el archivo de respuesta del SAT, dar clic en siguiente y
+                                    subir los archivos.
+                                </p>
+                                <a href="https://agsc.siat.sat.gob.mx/PTSC/ValidaRFC/index.jsf" target="_blank"
+                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Ir al SAT
+                                    <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 @endif
                 @if ($step == 4)
+                    <div class="w-full justify-center items-center flex">
+
+
+                        <div
+                            class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                            <a href="{{ route('admin.export_rfc', ['opcion' => $option]) }}">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                    Cargar Archivo de respuesta
+                                </h5>
+                            </a>
+                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                                Selecciona el archivo que obtuviste en el portal del SAT y haz clic en el boton de
+                                validar.
+                            </p>
+                            <form action="{{ route('admin.uploadResponseSat') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    for="file_input">Subir archivo</label>
+                                <input
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                    id="file_input" type="file" name="archivo" accept=".txt">
+                                <button type="submit"
+                                    class="inline-flex items-center px-3 py-2 my-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    Validar
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
                 @endif
             </div>
             <div

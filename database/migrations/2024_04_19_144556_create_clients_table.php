@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('city')->comment('Municipio asociado');
             $table->json('rfc_data')->nullable()->comment('Respuesta archivo RFC');
             $table->boolean('rfc_verified')->default(0)->comment('RFC VERIFICADO');
+            $table->string('comments')->nullable()->comment('Comentarios del SAT');
             $table->timestamps();
         });
     }
