@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class ValidationRfc extends Component
 {
-    public $step = 4;
+    public $step = 1;
     public $option = 'rfc_invalid';
     public function render()
     {
