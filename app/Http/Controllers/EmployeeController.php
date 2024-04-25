@@ -13,6 +13,7 @@ use App\Models\InstituteHealth;
 use App\Models\MaritalStatus;
 use App\Models\TaxRegime;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -150,7 +151,7 @@ class EmployeeController extends Controller
             });
         }
 
-        $batchArchivo = 'empleados.txt';
+        $batchArchivo = 'eficiente/exports/empleados.txt';
         // Abrir el archivo en modo escritura
         ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
 
@@ -205,9 +206,9 @@ class EmployeeController extends Controller
                         //     return $regimen->fecha_alta->date;
                         // }
                         if ($persona->tipo == 'fisica') {
-                            $this->personaFisica($persona);
+                            $this->createEmployee($persona);
                         } else {
-                            $this->personaMoral($persona);
+                            $this->createClient($persona);
                         }
                         unlink($extractedFilePath);
                     } catch (\Throwable $th) {
@@ -297,7 +298,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function personaFisica($person)
+    public function createEmployee($person)
     {
         try {
             DB::beginTransaction();
@@ -346,7 +347,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function personaMoral($person)
+    public function createClient($person)
     {
         try {
             DB::beginTransaction();
@@ -408,6 +409,9 @@ class EmployeeController extends Controller
     }
     public function uploadResponseSat(Request $request)
     {
+        if (!$request->file('archivo')) {
+            return back()->with('denied', 'Archivo requerido');
+        }
         header('Content-Type: text/html; charset=UTF-8');
         // Nombre del archivo de texto
         $archivo = $request->file('archivo');
@@ -426,15 +430,16 @@ class EmployeeController extends Controller
                 $rfc = trim($datos[1]);
 
                 $respuesta = trim($datos[4]); // Código Postal
-                $employee = Employee::where('rfc',$rfc)->first();
-                if($employee){
+                $employee = Employee::where('rfc', $rfc)->first();
+                if ($employee) {
                     if (strpos($respuesta, 'RFC v?lido') !== false) {
                         $employee->update([
-                            'rfc_verified' => 1
+                            'rfc_verified' => 1,
                         ]);
-                    }else{
+                    } else {
                         $employee->update([
-                            'comments' => $respuesta
+                            'rfc_verified' => 0,
+                            'comments' => $respuesta,
                         ]);
                     }
                 }
@@ -444,7 +449,36 @@ class EmployeeController extends Controller
             fclose($gestor);
         } else {
             // Manejar el caso en que no se pudo abrir el archivo
-            return back()->with('denied','No se pudo leer el archivo');
+            return back()->with('denied', 'No se pudo leer el archivo');
+        }
+        return redirect()->route('admin.employees')->with('success', 'Datos leidos corectamente.');
+    }
+
+    public function createByDocument(Request $request)
+    {
+        $request->validate([
+            'pdf' => 'required|mimetypes:application/pdf|max:2000',
+        ]);
+        try {
+            $scraper = Scraper::create();
+            $rutaDocumento = $request->file('pdf');
+            $persona = $this->readPdf($rutaDocumento);
+            if ($request->type == 'employee') {
+                if ($persona->tipo == 'fisica') {
+                    $this->createEmployee($persona);
+                } else {
+                    return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
+                }
+            } else {
+                return 'En proceso';
+            }
+        } catch (\Throwable $th) {
+            return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
+        }
+        if ($request->type == 'employee') {
+            return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
+        } else {
+            return redirect()->route('admin.employees')->with('success', 'Cliente creado correctamente');
         }
     }
 }

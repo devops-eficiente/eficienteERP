@@ -33,6 +33,8 @@ Route::controller(EmployeeController::class)->prefix('empleados')->name('admin.'
 
     Route::get('/exportacion_masiva','export_rfc')->name('export_rfc');
     Route::post('/exportacion_masiva','uploadResponseSat')->name('uploadResponseSat');
+
+    Route::post('crear_documento','createByDocument')->name('createByDocument');
 });
 
 Route::controller(ClientController::class)->prefix('clientes')->name('admin.')->middleware('auth')->group(function(){

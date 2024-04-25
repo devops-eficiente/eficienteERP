@@ -321,6 +321,7 @@
             <button type="button" class="btn bg-warning text-white rounded-full">Cancelar</button>
         </div>
     </form>
+    @livewire('components.upload-document', ['type' => 'employee'])
 @endsection
 
 @section('script')
