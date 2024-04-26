@@ -9,9 +9,13 @@ class Contact extends Model
 {
     use HasFactory;
     protected $table = 'contacts';
-    protected $guarded = [];
+    protected $fillable = [
+        'person_id',
+        'email',
+        'phone'
+    ];
 
-    public function client(){
-        return $this->belongsTo(Client::class);
+    public function person(){
+        return $this->belongsTo(Person::class);
     }
 }

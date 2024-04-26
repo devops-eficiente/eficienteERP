@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_tax_regime', function (Blueprint $table) {
+        Schema::create('person_tax_regime', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained()->comment('Id cliente');
+            $table->foreignId('person_id')->constrained('persons','id')->comment('Id persona');
             $table->foreignId('tax_regime_id')->constrained()->comment('Id regimen fiscal');
             $table->date('start_date')->comment('Fecha de inicio');
             $table->date('end_date')->nullable()->comment('Fecha de fin');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_tax_regime');
+        Schema::dropIfExists('person_tax_regime');
     }
 };

@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained()->comment('Id cliente');
+            $table->foreignId('person_id')->constrained('persons','id')->comment('Id persona');
+            $table->string('state')->comment('Estado asociado');
+            $table->string('city')->comment('Municipio asociado');
             $table->string('zip_code',5)->comment('Codigo postal');
             $table->string('road_type')->comment('Tipo de vialidad');
             $table->string('road_name')->comment('Nombre de vialidad');
             $table->string('internal_number')->comment('Número interno de la dirección del cliente');
             $table->string('external_number')->comment('Número externo de la dirección del cliente');
             $table->string('suburb')->comment('Colonia de la dirección del cliente');
-            
             $table->timestamps();
         });
     }

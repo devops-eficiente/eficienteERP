@@ -8,19 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
-    protected $guarded = [];
+    protected $fillable = [
+        'n_client',
+        'person_id',
+        'company_name',
+        'capital_regime',
+        'status',
+        'updated_date',
+        'rfc_verified',
+    ];
 
     protected $casts = [
         'rfc_data' => 'array'
     ];
 
-    public function address(){
-        return $this->hasMany(Address::class);
-    }
-    public function contacts(){
-        return $this->hasMany(Contact::class);
-    }
-    public function tax_regimes(){
-        return $this->belongsToMany(TaxRegime::class)->withPivot('status','end_date','start_date');;
+    public function person(){
+        return $this->belongsTo(Person::class);
     }
 }

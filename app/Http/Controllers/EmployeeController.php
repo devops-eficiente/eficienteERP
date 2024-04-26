@@ -172,7 +172,6 @@ class EmployeeController extends Controller
 
     public function uploadZip(Request $request)
     {
-        //public_path('eficiente/zip/CUHC990830HCSRTR06.zip')
         $zipFilePath = $request->file('zip');
         $extractPath = public_path('eficiente/extracted_files'); // Ruta donde se extraerán los archivos
 
@@ -198,18 +197,12 @@ class EmployeeController extends Controller
                     try {
                         $rutaDocumento = $extractedFilePath;
                         $persona = $this->readPdf($rutaDocumento);
-                        // return Carbon::parse($persona->regimenes[0]->fecha_alta->date)->format('Y-m-d');
-                        // return date('Y-m-d',$persona->regimenes[0]->fecha_alta->date);
-                        // return 'hola';
-                        // foreach($persona->regimenes as $regimen){
-                        //     return date('Y-m-d',$regimen->fecha_alta->date);
-                        //     return $regimen->fecha_alta->date;
+                        // if ($persona->tipo == 'fisica') {
+                        //     $this->createEmployee($persona);
+                        // } else {
+                        //     $this->createClient($persona);
                         // }
-                        if ($persona->tipo == 'fisica') {
-                            $this->createEmployee($persona);
-                        } else {
-                            $this->createClient($persona);
-                        }
+                        $person[$i] = $persona;
                         unlink($extractedFilePath);
                     } catch (\Throwable $th) {
                         $resultados[$i]['archivo'] = $fileName;
@@ -223,6 +216,7 @@ class EmployeeController extends Controller
                     $resultados[$i]['status'] = false;
                 }
             }
+            return $person;
             // Cerrar el archivo ZIP
             $zip->close();
             return back()->with('success', 'Archivo ejecutado correctamente');
@@ -474,6 +468,29 @@ class EmployeeController extends Controller
             }
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
+        }
+        if ($request->type == 'employee') {
+            return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
+        } else {
+            return redirect()->route('admin.employees')->with('success', 'Cliente creado correctamente');
+        }
+    }
+
+    public function createByData(Request $request)
+    {
+        try {
+            $persona = $this->checkRFC($request->rfc, $request->cif);
+            if ($request->type == 'employee') {
+                if ($persona->tipo == 'fisica') {
+                    $this->createEmployee($persona);
+                } else {
+                    return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
+                }
+            } else {
+                return 'En proceso';
+            }
+        } catch (\Throwable $th) {
+            return back()->with('denied', 'No se econtro a la persona verificar datos.');
         }
         if ($request->type == 'employee') {
             return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');

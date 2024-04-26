@@ -9,12 +9,16 @@ class TaxRegime extends Model
 {
     use HasFactory;
     protected $table = 'tax_regimes';
-    protected $guarded = [];
 
-    public function clients(){
-        return $this->belongsToMany(Client::class)->withPivot('status','end_date','start_date');;
-    }
-    public function employees(){
-        return $this->belongsToMany(Employee::class)->withPivot('status','end_date','start_date');;
+    protected $fillable = [
+        'person_id',
+        'tax_regime_id',
+        'start_date',
+        'end_date',
+        'status'
+    ];
+
+    public function persons(){
+        return $this->belongsToMany(Person::class)->withPivot('status','end_date','start_date');;
     }
 }

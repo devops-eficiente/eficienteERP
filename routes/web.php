@@ -35,6 +35,7 @@ Route::controller(EmployeeController::class)->prefix('empleados')->name('admin.'
     Route::post('/exportacion_masiva','uploadResponseSat')->name('uploadResponseSat');
 
     Route::post('crear_documento','createByDocument')->name('createByDocument');
+    Route::post('subir_datos','createByData')->name('createByData');
 });
 
 Route::controller(ClientController::class)->prefix('clientes')->name('admin.')->middleware('auth')->group(function(){

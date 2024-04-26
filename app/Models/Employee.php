@@ -9,7 +9,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Employee extends Model
 {
     use HasFactory;
-    protected $guarded = [];
+    protected $fillable = [
+        'n_employee',
+        'paternal_surname',
+        'maternal_surname',
+        'name',
+        'curp',
+        'nss',
+        'n_identification',
+        'complete',
+        'rfc_verified',
+        'status',
+        'person_id',
+        'institute_health_id',
+        'identification_employee_id',
+        'blood_type_id',
+        'marital_status_id',
+        'emergency_contacts',
+        'birthdate',
+        'nationality',
+        'gender'
+    ];
     /**
      * Get the BloodType that owns the Employee.
      */
@@ -42,14 +62,12 @@ class Employee extends Model
         return $this->belongsTo(MaritalStatus::class);
     }
 
-    public function tax_regimes(){
-        return $this->belongsToMany(TaxRegime::class)->withPivot('status','end_date','start_date');
+    public function person(){
+        return $this->belongsTo(Person::class);
     }
 
     protected $casts = [
-        'contacts' => 'array',
         'emergency_contacts' => 'array',
-        'rfc_data' => 'array'
     ];
 
 }
