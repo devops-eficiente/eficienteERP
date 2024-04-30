@@ -46,7 +46,11 @@ class EmployeeController extends Controller
     {
         return $request;
         try {
-            $data = $request->all();
+            $person = Person::create([
+                'rfc' => $request->rfc,
+                'type' => 'fiscal',
+
+            ]);
             $ult = Employee::max('id') + 1;
             $data['n_employee'] = 'E' . $ult;
             DB::beginTransaction();
@@ -193,7 +197,7 @@ class EmployeeController extends Controller
                     try {
                         $rutaDocumento = $extractedFilePath;
                         $persona = $this->readPdf($rutaDocumento);
-                        if ($persona->tipo == 'fisica') {
+                        if ($persona->tipo == 'fiscal') {
                             $this->createEmployee($persona);
                         }
                         // $person[$i] = $persona;
@@ -235,7 +239,7 @@ class EmployeeController extends Controller
         $persona = json_decode($persona);
         $data = $persona;
         if ($rfc->isFisica()) {
-            $data->tipo = 'fisica';
+            $data->tipo = 'fiscal';
         }
         if ($rfc->isMoral()) {
             $data->tipo = 'moral';
@@ -291,8 +295,8 @@ class EmployeeController extends Controller
             $person = Person::create([
                 'rfc' => $person->rfc,
                 'type' => 'employee',
-                'regimen' => $person->tipo,
-                'start_date' => $person->fecha_inicio_operaciones->date,
+                'regimen' => 'fiscal',
+                'start_date' => Carbon::parse($person->fecha_inicio_operaciones->date)->format('Y-m-d'),
                 'status' => $person->situacion_contribuyente,
             ]);
             $ult = Employee::max('id') + 1;
@@ -302,19 +306,19 @@ class EmployeeController extends Controller
                 'paternal_surname' => $person->apellido_paterno,
                 'maternal_surname' => $person->apellido_materno,
                 'name' => $person->nombre,
-                // 'zip_code' => $person->codigo_postal,
                 'curp' => $person->curp,
                 'rfc' => $person->rfc,
                 'nss' => '',
                 'n_identification' => '',
                 'gender' => 'Otro',
                 'nationality' => 'Mexicana',
-                'birthdate' => $person->fecha_nacimiento->date,
+                'birthdate' => Carbon::parse($person->fecha_nacimiento->date)->format('Y-m-d'),
                 'emergency_contacts' => '',
                 'rfc_verified' => 1,
                 'status' => 1,
             ]);
             foreach ($person->regimenes as $regimen) {
+                return $regimen;
                 $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
                 if ($taxRegime) {
                     if (isset($regimen->fecha_baja)) {
@@ -354,6 +358,7 @@ class EmployeeController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
+            return $th->getMessage();
         }
     }
 
@@ -418,22 +423,23 @@ class EmployeeController extends Controller
             $rutaDocumento = $request->file('pdf');
             $persona = $this->readPdf($rutaDocumento);
             if ($request->type == 'employee') {
-                if ($persona->tipo == 'fisica') {
-                    $this->createEmployee($persona);
+                if ($persona->tipo == 'fiscal') {
+                    return $this->createEmployee($persona);
                 } else {
                     return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
                 }
+                return $persona;
             } else {
                 return 'En proceso';
             }
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
-        if ($request->type == 'employee') {
-            return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
-        } else {
-            return redirect()->route('admin.employees')->with('success', 'Cliente creado correctamente');
-        }
+        // if ($request->type == 'employee') {
+        //     return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
+        // } else {
+        //     return redirect()->route('admin.employees')->with('success', 'Cliente creado correctamente');
+        // }
     }
 
     public function createByData(Request $request)
@@ -441,7 +447,7 @@ class EmployeeController extends Controller
         try {
             $persona = $this->checkRFC($request->rfc, $request->cif);
 
-            if ($persona->tipo == 'fisica') {
+            if ($persona->tipo == 'fiscal') {
                 $this->createEmployee($persona);
             } else {
                 return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');

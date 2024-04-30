@@ -22,7 +22,7 @@ class EmployeeStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rfc' => 'required|unique:employees',
+            'rfc' => 'required|unique:persons',
             'curp' => 'required|unique:employees',
             'nss' => 'required|unique:employees',
             'name' => 'required',
@@ -38,7 +38,6 @@ class EmployeeStoreRequest extends FormRequest
             'n_identification' => 'required',
             'contacts.email' => 'required|email',
             'contacts.telephone' => 'required|digits:10',
-            'contacts.phone' => 'required|digits:10',
             'emergency_contacts.name' => 'required',
             'emergency_contacts.phone' => 'required|digits:10',
             'zip_code' => 'nullable|digits:5',

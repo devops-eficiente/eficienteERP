@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('person_id')->constrained('persons','id')->comment('Id persona');
             $table->foreignId('tax_regime_id')->constrained()->comment('Id regimen fiscal');
-            $table->date('start_date')->comment('Fecha de inicio');
+            $table->date('start_date')->nullable()->comment('Fecha de inicio');
             $table->date('end_date')->nullable()->comment('Fecha de fin');
             $table->boolean('status')->comment('Estado');
             $table->timestamps();

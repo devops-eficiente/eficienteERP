@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('person_id')->constrained('persons','id')->comment('Id persona');
-            $table->string('email')->comment('Correo electronico');
-            $table->string('phone')->comment('Numero de telefono');
+            $table->string('email')->nullable()->comment('Correo electronico');
+            $table->string('phone')->nullable()->comment('Numero de telefono');
             $table->timestamps();
         });
     }
