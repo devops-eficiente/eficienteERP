@@ -212,7 +212,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="grid lg:grid-cols-4 gap-6 my-4">
+                <div class="grid lg:grid-cols-3 gap-6 my-4">
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">Correo
                             Electronico</label>
@@ -241,21 +241,6 @@
                             </div>
                         </div>
                         @error('contacts.telephone')
-                            <span class="text-red-800">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Número de telefono
-                        </label>
-                        <div class="relative">
-                            <input type="text" id="leading-icon" name="contacts[phone]"
-                                value="{{ old('contacts[phone]') }}" class="form-input ps-11" placeholder="#########">
-                            <div class="absolute inset-y-0 start-4 flex items-center z-20">
-                                <i class="mgc_phone_line text-lg text-gray-400"></i>
-                            </div>
-                        </div>
-                        @error('contacts.phone')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>

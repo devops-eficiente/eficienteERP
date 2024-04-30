@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             InstituteHealthSeeder::class,
             MaritalStatusSeeder::class,
             TaxRegimeSeeder::class,
+            CountrySeeder::class,
+            StateSeeder::class,
+            CitySeeder::class,
         ]);
     }
 }

@@ -18,28 +18,30 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[AdminController::class,'index'])->middleware('auth')->name('index');
 
-Route::controller(EmployeeController::class)->prefix('empleados')->name('admin.')->middleware('auth')->group(function(){
-    Route::get('/','index')->name('employees');
-    Route::get('/crear','create')->name('create_employee');
-    Route::get('/validacion_masiva','validationRfc')->name('validationRfc');
-    Route::post('/agregar','store')->name('store_employee');
+Route::name('admin.')->middleware('auth')->group(function(){
+    Route::controller(EmployeeController::class)->prefix('empleados')->group(function(){
+        Route::get('/','index')->name('employees');
+        Route::get('/crear','create')->name('create_employee');
+        Route::get('/validacion_masiva','validationRfc')->name('validationRfc');
+        Route::post('/agregar','store')->name('store_employee');
 
-    Route::post('importacion_masiva','uploadZip')->name('uploadZip');
-    Route::post('subir_documento/{id}','uploadDocument')->name('uploadDocument');
-    Route::post('subir_datos/{id}','checkCIF')->name('check_rfc');
+        Route::post('importacion_masiva','uploadZip')->name('uploadZip');
+        Route::post('subir_documento/{id}','uploadDocument')->name('uploadDocument');
+        Route::post('subir_datos/{id}','checkCIF')->name('check_rfc');
 
-    Route::get('subir_documento/continue','continue')->name('continue_employee');
-    Route::get('subir_documento/edit','edit_data')->name('edit_data_employee');
+        Route::get('subir_documento/continue','continue')->name('continue_employee');
+        Route::get('subir_documento/edit','edit_data')->name('edit_data_employee');
 
-    Route::get('/exportacion_masiva','export_rfc')->name('export_rfc');
-    Route::post('/exportacion_masiva','uploadResponseSat')->name('uploadResponseSat');
+        Route::get('/exportacion_masiva','export_rfc')->name('export_rfc');
+        Route::post('/exportacion_masiva','uploadResponseSat')->name('uploadResponseSat');
 
-    Route::post('crear_documento','createByDocument')->name('createByDocument');
-    Route::post('subir_datos','createByData')->name('createByData');
+        Route::post('crear_documento','createByDocument')->name('createByDocument');
+        Route::post('subir_datos','createByData')->name('createByData');
+    });
+
+    Route::controller(ClientController::class)->prefix('clientes')->group(function(){
+        Route::get('/','index')->name('clients');
+        
+    });
 });
 
-Route::controller(ClientController::class)->prefix('clientes')->name('admin.')->middleware('auth')->group(function(){
-    Route::get('/','index')->name('clients');
-
-})
-;

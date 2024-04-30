@@ -11,6 +11,8 @@ use App\Models\Employee;
 use App\Models\IdentificationEmployee;
 use App\Models\InstituteHealth;
 use App\Models\MaritalStatus;
+use App\Models\Person;
+use App\Models\RfcData;
 use App\Models\TaxRegime;
 use Carbon\Carbon;
 use Exception;
@@ -42,6 +44,7 @@ class EmployeeController extends Controller
 
     public function store(EmployeeStoreRequest $request)
     {
+        return $request;
         try {
             $data = $request->all();
             $ult = Employee::max('id') + 1;
@@ -178,16 +181,9 @@ class EmployeeController extends Controller
         $zip = new ZipArchive();
         $extractPath = $extractPath . '/' . uniqid();
         if ($zip->open($zipFilePath) === true) {
-            // Iterar sobre cada archivo dentro del ZIP
-
             for ($i = 0; $i < $zip->numFiles; $i++) {
-                // Obtener información del archivo
                 $fileInfo = $zip->statIndex($i);
-                // Nombre del archivo dentro del ZIP
                 $fileName = $fileInfo['name'];
-
-                // Extraer el contenido del archivo a la ruta especificada
-                // echo "Extracted file path: $extractedFilePath\n";
                 $path = $extractPath . '/' . uniqid();
                 if (pathinfo($fileName, PATHINFO_EXTENSION) === 'pdf') {
                     $zip->extractTo($path, $fileName);
@@ -197,12 +193,10 @@ class EmployeeController extends Controller
                     try {
                         $rutaDocumento = $extractedFilePath;
                         $persona = $this->readPdf($rutaDocumento);
-                        // if ($persona->tipo == 'fisica') {
-                        //     $this->createEmployee($persona);
-                        // } else {
-                        //     $this->createClient($persona);
-                        // }
-                        $person[$i] = $persona;
+                        if ($persona->tipo == 'fisica') {
+                            $this->createEmployee($persona);
+                        }
+                        // $person[$i] = $persona;
                         unlink($extractedFilePath);
                     } catch (\Throwable $th) {
                         $resultados[$i]['archivo'] = $fileName;
@@ -216,12 +210,10 @@ class EmployeeController extends Controller
                     $resultados[$i]['status'] = false;
                 }
             }
-            return $person;
-            // Cerrar el archivo ZIP
+            // return $person;
             $zip->close();
             return back()->with('success', 'Archivo ejecutado correctamente');
         } else {
-            // Si no se puede abrir el archivo ZIP, maneja el error según sea necesario
             return back()->with('denied', 'No se puede leer el archivo');
         }
     }
@@ -296,13 +288,21 @@ class EmployeeController extends Controller
     {
         try {
             DB::beginTransaction();
+            $person = Person::create([
+                'rfc' => $person->rfc,
+                'type' => 'employee',
+                'regimen' => $person->tipo,
+                'start_date' => $person->fecha_inicio_operaciones->date,
+                'status' => $person->situacion_contribuyente,
+            ]);
             $ult = Employee::max('id') + 1;
-            $employee = Employee::create([
+            Employee::create([
                 'n_employee' => 'E' . $ult,
+                'person_id' => $person->id,
                 'paternal_surname' => $person->apellido_paterno,
                 'maternal_surname' => $person->apellido_materno,
                 'name' => $person->nombre,
-                'zip_code' => $person->codigo_postal,
+                // 'zip_code' => $person->codigo_postal,
                 'curp' => $person->curp,
                 'rfc' => $person->rfc,
                 'nss' => '',
@@ -310,13 +310,9 @@ class EmployeeController extends Controller
                 'gender' => 'Otro',
                 'nationality' => 'Mexicana',
                 'birthdate' => $person->fecha_nacimiento->date,
-                'rfc_data' => $person,
-                'contacts' => [
-                    'email' => $person->correo_electronico,
-                    'telephone' => '',
-                ],
                 'emergency_contacts' => '',
                 'rfc_verified' => 1,
+                'status' => 1,
             ]);
             foreach ($person->regimenes as $regimen) {
                 $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
@@ -328,61 +324,22 @@ class EmployeeController extends Controller
                         $status = 1;
                         $end_date = null;
                     }
-                    $employee->tax_regimes()->attach($taxRegime->id, [
+                    $person->tax_regimes()->attach($taxRegime->id, [
                         'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
                         'end_date' => $end_date,
                         'status' => $status,
                     ]);
                 }
             }
-            DB::commit();
-        } catch (\Throwable $th) {
-            DB::rollBack();
-        }
-    }
-
-    public function createClient($person)
-    {
-        try {
-            DB::beginTransaction();
-            $client = Client::create([
-                'company_name' => $person->razon_social,
-                'capital_regime' => $person->regimen_de_capital,
-                'rfc' => $person->rfc,
-                'start_date' => $person->fecha_inicio_operaciones->date,
-                'status' => $person->situacion_contribuyente == 'ACTIVO' ? 1 : 0,
-                'updated_date' => $person->fecha_ultimo_cambio_situacion->date,
-                'state' => $person->entidad_federativa,
-                'city' => $person->municipio_delegacion,
-                'rfc_data' => $person,
-                'rfc_verified' => 1,
-            ]);
-
-            foreach ($person->regimenes as $regimen) {
-                $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
-                if ($taxRegime) {
-                    if (isset($regimen->fecha_baja)) {
-                        $status = 0;
-                        $end_date = Carbon::parse($regimen->fecha_baja->date)->format('Y-m-d');
-                    } else {
-                        $status = 1;
-                        $end_date = null;
-                    }
-                    $client->tax_regimes()->attach($taxRegime->id, [
-                        'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
-                        'end_date' => $end_date,
-                        'status' => $status,
-                    ]);
-                }
-            }
-
             Contact::create([
-                'client_id' => $client->id,
+                'person_id' => $person->id,
                 'email' => $person->correo_electronico,
                 'phone' => '',
             ]);
             Address::create([
-                'client_id' => $client->id,
+                'person_id' => $person->id,
+                'state' => $person->entidad_federativa,
+                'city' => $person->municipio_delegacion,
                 'zip_code' => $person->codigo_postal,
                 'road_type' => $person->tipo_vialidad,
                 'road_name' => $person->nombre_vialidad,
@@ -390,17 +347,21 @@ class EmployeeController extends Controller
                 'external_number' => $person->numero_exterior,
                 'suburb' => $person->colonia,
             ]);
+            RfcData::create([
+                'person_id' => $person->id,
+                'data' => $person
+            ]);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            // return $th->getMessage();
         }
-        // return true;
     }
+
     public function validationRfc()
     {
         return view('employee.validationEmployee');
     }
+
     public function uploadResponseSat(Request $request)
     {
         if (!$request->file('archivo')) {
@@ -454,7 +415,6 @@ class EmployeeController extends Controller
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
         try {
-            $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
             $persona = $this->readPdf($rutaDocumento);
             if ($request->type == 'employee') {
@@ -480,14 +440,11 @@ class EmployeeController extends Controller
     {
         try {
             $persona = $this->checkRFC($request->rfc, $request->cif);
-            if ($request->type == 'employee') {
-                if ($persona->tipo == 'fisica') {
-                    $this->createEmployee($persona);
-                } else {
-                    return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
-                }
+
+            if ($persona->tipo == 'fisica') {
+                $this->createEmployee($persona);
             } else {
-                return 'En proceso';
+                return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
             }
         } catch (\Throwable $th) {
             return back()->with('denied', 'No se econtro a la persona verificar datos.');
