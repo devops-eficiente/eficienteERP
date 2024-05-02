@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('n_identification')->comment('Numero de identificacion');
             $table->enum('gender', ['Hombre', 'Mujer', 'Otro'])->default('Otro');
             $table->enum('nationality', ['Mexicana', 'Extrangera'])->default('Mexicana');
-            $table->date('birthdate')->comment('Fecha de nacimiento');
+            $table->date('birthdate')->nullable()->comment('Fecha de nacimiento');
             $table->json('emergency_contacts')->comment('Contacto emergencia');
             $table->foreignId('blood_type_id')->nullable()->constrained()->comment('Tipo de sangre');
             $table->foreignId('marital_status_id')->nullable()->constrained('marital_status')->comment('Estado civil');

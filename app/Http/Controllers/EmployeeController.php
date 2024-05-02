@@ -290,19 +290,21 @@ class EmployeeController extends Controller
 
     public function createEmployee($person)
     {
+
         try {
             DB::beginTransaction();
-            $person = Person::create([
+            $newperson = Person::create([
                 'rfc' => $person->rfc,
                 'type' => 'employee',
                 'regimen' => 'fiscal',
                 'start_date' => Carbon::parse($person->fecha_inicio_operaciones->date)->format('Y-m-d'),
                 'status' => $person->situacion_contribuyente,
             ]);
+
             $ult = Employee::max('id') + 1;
             Employee::create([
                 'n_employee' => 'E' . $ult,
-                'person_id' => $person->id,
+                'person_id' => $newperson->id,
                 'paternal_surname' => $person->apellido_paterno,
                 'maternal_surname' => $person->apellido_materno,
                 'name' => $person->nombre,
@@ -318,7 +320,6 @@ class EmployeeController extends Controller
                 'status' => 1,
             ]);
             foreach ($person->regimenes as $regimen) {
-                return $regimen;
                 $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
                 if ($taxRegime) {
                     if (isset($regimen->fecha_baja)) {
@@ -328,7 +329,7 @@ class EmployeeController extends Controller
                         $status = 1;
                         $end_date = null;
                     }
-                    $person->tax_regimes()->attach($taxRegime->id, [
+                    $newperson->tax_regimes()->attach($taxRegime->id, [
                         'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
                         'end_date' => $end_date,
                         'status' => $status,
@@ -336,12 +337,12 @@ class EmployeeController extends Controller
                 }
             }
             Contact::create([
-                'person_id' => $person->id,
+                'person_id' => $newperson->id,
                 'email' => $person->correo_electronico,
                 'phone' => '',
             ]);
             Address::create([
-                'person_id' => $person->id,
+                'person_id' => $newperson->id,
                 'state' => $person->entidad_federativa,
                 'city' => $person->municipio_delegacion,
                 'zip_code' => $person->codigo_postal,
@@ -352,7 +353,7 @@ class EmployeeController extends Controller
                 'suburb' => $person->colonia,
             ]);
             RfcData::create([
-                'person_id' => $person->id,
+                'person_id' => $newperson->id,
                 'data' => $person
             ]);
             DB::commit();
@@ -435,11 +436,11 @@ class EmployeeController extends Controller
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
-        // if ($request->type == 'employee') {
-        //     return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
-        // } else {
-        //     return redirect()->route('admin.employees')->with('success', 'Cliente creado correctamente');
-        // }
+        if ($request->type == 'employee') {
+            return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
+        } else {
+            return redirect()->route('admin.employees')->with('success', 'Cliente creado correctamente');
+        }
     }
 
     public function createByData(Request $request)

@@ -226,7 +226,7 @@ class ClientController extends Controller
         try {
             $ult = Client::max('id') + 1;
             DB::beginTransaction();
-            $person = Person::create([
+            $newPerson = Person::create([
                 'rfc' => $person->rfc,
                 'type' => 'client',
                 'regimen' => $person->tipo,
@@ -241,7 +241,7 @@ class ClientController extends Controller
                 $name = $person->razon_social;
             }
             Client::create([
-                'person_id' => $person->id,
+                'person_id' => $newPerson->id,
                 'n_client' => 'E' . $ult,
                 'company_name' => $name,
                 'capital_regime' => $regimen,
@@ -260,7 +260,7 @@ class ClientController extends Controller
                         $status = 1;
                         $end_date = null;
                     }
-                    $person->tax_regimes()->attach($taxRegime->id, [
+                    $newPerson->tax_regimes()->attach($taxRegime->id, [
                         'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
                         'end_date' => $end_date,
                         'status' => $status,
@@ -269,12 +269,12 @@ class ClientController extends Controller
             }
 
             Contact::create([
-                'person_id' => $person->id,
+                'person_id' => $newPerson->id,
                 'email' => $person->correo_electronico,
                 'phone' => '',
             ]);
             Address::create([
-                'person_id' => $person->id,
+                'person_id' => $newPerson->id,
                 'state' => $person->entidad_federativa,
                 'city' => $person->municipio_delegacion,
                 'zip_code' => $person->codigo_postal,
@@ -285,13 +285,13 @@ class ClientController extends Controller
                 'suburb' => $person->colonia,
             ]);
             RfcData::create([
-                'person_id' => $person->id,
+                'person_id' => $newPerson->id,
                 'data' => $person
             ]);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            // return $th->getMessage();
+            return $th->getMessage();
         }
         // return true;
     }

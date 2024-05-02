@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('company_name')->comment('Razon social');
             $table->string('capital_regime')->comment('Regimen de capital');
             $table->boolean('status')->comment('Estado del cliente');
-            $table->date('updated_date')->comment('Fecha de último cambio de estado');
+            $table->date('updated_date')->nullable()->comment('Fecha de último cambio de estado');
             $table->boolean('rfc_verified')->default(0)->comment('RFC VERIFICADO');
             $table->timestamps();
         });
