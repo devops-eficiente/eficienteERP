@@ -429,7 +429,6 @@ class EmployeeController extends Controller
                 } else {
                     return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
                 }
-                return $persona;
             } else {
                 return 'En proceso';
             }
