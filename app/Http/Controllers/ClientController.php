@@ -302,7 +302,6 @@ class ClientController extends Controller
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
         try {
-            $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
             $persona = $this->readPdf($rutaDocumento);
             if ($request->type == 'employee') {

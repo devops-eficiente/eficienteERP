@@ -6,9 +6,10 @@ use Livewire\Component;
 
 class UploadDocument extends Component
 {
-    public $employee;
-    public function mount($employee){
-        $this->employee = $employee;
+    public $person;
+    public function mount($person)
+    {
+        $this->person = $person;
     }
     public function render()
     {

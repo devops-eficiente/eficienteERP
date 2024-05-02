@@ -28,9 +28,9 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::paginate(10);
+        $persons = Person::paginate(10);
         // return $employees;
-        return view('employee.index', compact('employees'));
+        return view('employee.index', compact('persons'));
     }
 
     public function create()
@@ -44,16 +44,46 @@ class EmployeeController extends Controller
 
     public function store(EmployeeStoreRequest $request)
     {
-        return $request;
+        // return $request;
         try {
-            $person = Person::create([
-                'rfc' => $request->rfc,
-                'type' => 'fiscal',
-            ]);
+            DB::beginTransaction();
             $ult = Employee::max('id') + 1;
             $data['n_employee'] = 'E' . $ult;
-            DB::beginTransaction();
-            Employee::create($data);
+            $person = Person::create([
+                'rfc' => $request->rfc,
+                'type' => 'employee',
+                'regimen' => 'fiscal',
+            ]);
+            Employee::create([
+                'n_employee' => 'E' . $ult,
+                'person_id' => $person->id,
+                'paternal_surname' => $request->paternal_surname,
+                'maternal_surname' => $request->maternal_surname,
+                'name' => $request->name,
+                'curp' => $request->curp,
+                'rfc' => $request->rfc,
+                'institute_health_id ' => $request->institute_health_id,
+                'nss' => $request->nss,
+                'identification_employee_id' => $request->identification_employee_id,
+                'n_identification' => $request->n_identification,
+                'marital_status_id' => $request->marital_status_id,
+                'blood_type_id' => $request->blood_type_id,
+                'gender' => $request->gender,
+                'nationality' => $request->nationality,
+                'birthdate' => $request->birthdate,
+                'emergency_contacts' => '',
+                'rfc_verified' => 0,
+                'status' => 1,
+            ]);
+            Contact::create([
+                'person_id' => $person->id,
+                'email' => $request->contacts['email'],
+                'phone' => $request->contacts['telephone'],
+            ]);
+            Address::create([
+                'person_id' => $person->id,
+                'zip_code' => $request->zip_code,
+            ]);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -70,13 +100,12 @@ class EmployeeController extends Controller
         Session::forget('employee');
         Session::forget('persona');
         try {
-            $scraper = Scraper::create();
             $rutaDocumento = $request->file('pdf');
             $persona = $this->readPdf($rutaDocumento);
-            $employee = Employee::find($id);
-            Session::put('employee', $employee);
+            $person = Person::find($id);
+            Session::put('person', $person);
             Session::put('persona', $persona);
-            return view('employee.verified', compact('employee', 'persona'));
+            return view('employee.verified', compact('person', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
@@ -84,10 +113,12 @@ class EmployeeController extends Controller
 
     public function continue()
     {
-        $employee = Session::get('employee');
-        $persona = Session::get('persona');
-        $employee->update([
+        $person = Session::get('person');
+        $person->employee()->update([
             'rfc_verified' => 1,
+        ]);
+        $person->update([
+            'comments' => null
         ]);
         Session::forget('employee');
         Session::forget('persona');
@@ -96,17 +127,66 @@ class EmployeeController extends Controller
 
     public function edit_data()
     {
-        $employee = Session::get('employee');
-        $persona = Session::get('persona');
-        $employee->update([
-            'rfc_verified' => 1,
-            'name' => $persona->nombre,
-            'paternal_surname' => $persona->apellido_paterno,
-            'maternal_surname' => $persona->apellido_materno,
-            'rfc' => $persona->rfc,
-            'curp' => $persona->curp,
-            'zip_code' => $persona->codigo_postal,
-        ]);
+        try {
+            DB::beginTransaction();
+            $person = Session::get('person');
+            $persona = Session::get('persona');
+
+            $person->update([
+                'rfc' => $persona->rfc,
+                'type' => 'employee',
+                'regimen' => 'fiscal',
+                'start_date' => Carbon::parse($persona->fecha_inicio_operaciones->date)->format('Y-m-d'),
+                'status' => $persona->situacion_contribuyente,
+            ]);
+            $person->employee()->update([
+                'person_id' => $person->id,
+                'paternal_surname' => $persona->apellido_paterno,
+                'maternal_surname' => $persona->apellido_materno,
+                'name' => $persona->nombre,
+                'curp' => $persona->curp,
+                'rfc_verified' => 1,
+            ]);
+            foreach ($persona->regimenes as $regimen) {
+                $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
+                $person->tax_regimes()->detach();
+                if ($taxRegime) {
+                    if (isset($regimen->fecha_baja)) {
+                        $status = 0;
+                        $end_date = Carbon::parse($regimen->fecha_baja->date)->format('Y-m-d');
+                    } else {
+                        $status = 1;
+                        $end_date = null;
+                    }
+                    $person->tax_regimes()->attach($taxRegime->id, [
+                        'start_date' => Carbon::parse($regimen->fecha_alta->date)->format('Y-m-d'),
+                        'end_date' => $end_date,
+                        'status' => $status,
+                    ]);
+                }
+            }
+            $address = Address::where('person_id', $person->id)->first();
+            $address->update([
+                'state' => $persona->entidad_federativa,
+                'city' => $persona->municipio_delegacion,
+                'zip_code' => $persona->codigo_postal,
+                'road_type' => $persona->tipo_vialidad,
+                'road_name' => $persona->nombre_vialidad,
+                'internal_number' => $persona->numero_interior,
+                'external_number' => $persona->numero_exterior,
+                'suburb' => $persona->colonia,
+            ]);
+            RfcData::create([
+                'person_id' => $person->id,
+                'data' => $persona,
+            ]);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return $th->getMessage();
+            return redirect()->route('admin.employees')->with('denied', 'Error al actualizar los datos.');
+        }
+
         Session::forget('employee');
         Session::forget('persona');
         return redirect()->route('admin.employees')->with('success', 'Datos Verificados correctamente.');
@@ -118,10 +198,10 @@ class EmployeeController extends Controller
         Session::forget('persona');
         try {
             $persona = $this->checkRFC($request->rfc, $request->cif);
-            $employee = Employee::find($id);
-            Session::put('employee', $employee);
+            $person = Person::find($id);
+            Session::put('person', $person);
             Session::put('persona', $persona);
-            return view('employee.verified', compact('employee', 'persona'));
+            return view('employee.verified', compact('person', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
@@ -166,25 +246,19 @@ class EmployeeController extends Controller
             }
 
             $batchArchivo = 'eficiente/exports/empleados.txt';
-            // Abrir el archivo en modo escritura
             ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
 
-            // Iterar sobre los datos y escribir en el archivo
             foreach ($employees as $index => $fila) {
                 fwrite($archivo_handle, $index + 1 . '|' . implode('|', $fila) . "|\n");
             }
 
-            // Cerrar el archivo
             fclose($archivo_handle);
-
-            // Descarga del archivo
             header('Content-Type: application/octet-stream');
             header('Content-Disposition: attachment; filename="' . basename($batchArchivo) . '"');
             header('Content-Length: ' . filesize($batchArchivo));
             readfile($batchArchivo);
         } catch (\Throwable $th) {
-            //throw $th;
-            return back()->with('denied','Sucedio un error.');
+            return back()->with('denied', 'Sucedio un error.');
         }
     }
 
@@ -319,7 +393,6 @@ class EmployeeController extends Controller
                 'maternal_surname' => $person->apellido_materno,
                 'name' => $person->nombre,
                 'curp' => $person->curp,
-                'rfc' => $person->rfc,
                 'nss' => '',
                 'n_identification' => '',
                 'gender' => 'Otro',
@@ -405,7 +478,7 @@ class EmployeeController extends Controller
                 if ($person) {
                     if (strpos($respuesta, 'RFC v?lido') !== false) {
                         $person->employee()->update([
-                            'rfc_verified' => 1
+                            'rfc_verified' => 1,
                         ]);
                     } else {
                         $person->employee()->update([

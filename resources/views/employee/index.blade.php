@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="flex flex-col md:flex-row my-4 justify-around items-center w-full">
-        <a href="{{route('admin.validationRfc')}}" class="btn bg-secondary text-white">
+        <a href="{{ route('admin.validationRfc') }}" class="btn bg-secondary text-white">
             Validacion masiva
         </a>
         @livewire('employee.upload-zip')
@@ -65,27 +65,27 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                @foreach ($employees as $employee)
+                                @foreach ($persons as $person)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $employee->n_employee }}
+                                            {{ $person->employee->n_employee }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 ">
-                                            {{ $employee->name }} {{ $employee->paternal_surname }}
-                                            {{ $employee->maternal_surname }}
+                                            {{ $person->employee->name }} {{ $person->employee->paternal_surname }}
+                                            {{ $person->employee->maternal_surname }}
                                         </td>
 
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $employee->curp }}
+                                            {{ $person->employee->curp }}
                                         </td>
-                                        @if (!$employee->rfc_verified)
+                                        @if (!$person->employee->rfc_verified)
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                                {{ $employee->rfc }}
+                                                {{ $person->rfc }}
 
                                             </td>
                                         @else
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-green-800 ">
-                                                {{ $employee->rfc }}
+                                                {{ $person->employee->rfc }}
                                                 <p class="text-xs text-center">
                                                     Verificado
                                                     <i class="mgc_check_2_fill"></i>
@@ -93,12 +93,12 @@
                                             </td>
                                         @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $employee->comments ?? 'N/A'}}
+                                            {{ $person->comments ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <div class="flex flex-col gap-4">
-                                                @if (!$employee->rfc_verified)
-                                                    @livewire('employee.upload-document', ['employee' => $employee])
+                                                @if (!$person->employee->rfc_verified)
+                                                    @livewire('employee.upload-document', ['person' => $person])
                                                 @endif
                                                 <div>
                                                     <a class="text-success hover:text-sky-700" href="#">

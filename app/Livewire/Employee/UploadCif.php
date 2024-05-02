@@ -6,10 +6,10 @@ use Livewire\Component;
 
 class UploadCif extends Component
 {
-    public $employee;
-    public function mount($employee)
+    public $person;
+    public function mount($person)
     {
-        $this->employee = $employee;
+        $this->person = $person;
     }
     public function render()
     {
