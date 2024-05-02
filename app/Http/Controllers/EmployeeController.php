@@ -425,7 +425,7 @@ class EmployeeController extends Controller
             $persona = $this->readPdf($rutaDocumento);
             if ($request->type == 'employee') {
                 if ($persona->tipo == 'fiscal') {
-                    return $this->createEmployee($persona);
+                    $this->createEmployee($persona);
                 } else {
                     return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
                 }
