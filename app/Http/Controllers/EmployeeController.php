@@ -49,7 +49,6 @@ class EmployeeController extends Controller
             $person = Person::create([
                 'rfc' => $request->rfc,
                 'type' => 'fiscal',
-
             ]);
             $ult = Employee::max('id') + 1;
             $data['n_employee'] = 'E' . $ult;
@@ -130,51 +129,63 @@ class EmployeeController extends Controller
 
     public function export_rfc(Request $request)
     {
-        if ($request->opcion == 'rfc_invalid') {
-            $employees = Employee::where('rfc_verified', 0)
-                ->get()
-                ->map(function ($employee) {
-                    return [
-                        'rfc' => $employee->rfc,
-                        'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
-                        'zip_code' => $employee->zip_code,
-                    ];
-                });
-        } elseif ($request->opcion == 'all_active') {
-            $employees = Employee::get()->map(function ($employee) {
-                return [
-                    'rfc' => $employee->rfc,
-                    'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
-                    'zip_code' => $employee->zip_code,
-                ];
-            });
-        } elseif ($request->opcion == 'all') {
-            $employees = Employee::get()->map(function ($employee) {
-                return [
-                    'rfc' => $employee->rfc,
-                    'full_name' => $employee->name . ' ' . $employee->paternal_surname . ' ' . $employee->maternal_surname,
-                    'zip_code' => $employee->zip_code,
-                ];
-            });
+        try {
+            if ($request->opcion == 'rfc_invalid') {
+                $employees = Person::with(['employee', 'addresses'])
+                    ->whereHas('employee', function ($query) {
+                        $query->where('rfc_verified', 0);
+                    })
+                    ->get()
+                    ->map(function ($person) {
+                        return [
+                            'rfc' => $person->rfc,
+                            'full_name' => $person->employee->name . ' ' . $person->employee->paternal_surname . ' ' . $person->employee->maternal_surname,
+                            'zip_code' => $person->addresses[0]->zip_code,
+                        ];
+                    });
+            } elseif ($request->opcion == 'all_active') {
+                $persons = Person::with(['employee', 'addresses'])
+                    ->get()
+                    ->map(function ($person) {
+                        return [
+                            'rfc' => $person->rfc,
+                            'full_name' => $person->employee->name . ' ' . $person->employee->paternal_surname . ' ' . $person->employee->maternal_surname,
+                            'zip_code' => $person->addresses[0]->zip_code,
+                        ];
+                    });
+            } elseif ($request->opcion == 'all') {
+                $persons = Person::with(['employee', 'addresses'])
+                    ->get()
+                    ->map(function ($person) {
+                        return [
+                            'rfc' => $person->rfc,
+                            'full_name' => $person->employee->name . ' ' . $person->employee->paternal_surname . ' ' . $person->employee->maternal_surname,
+                            'zip_code' => $person->addresses[0]->zip_code,
+                        ];
+                    });
+            }
+
+            $batchArchivo = 'eficiente/exports/empleados.txt';
+            // Abrir el archivo en modo escritura
+            ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
+
+            // Iterar sobre los datos y escribir en el archivo
+            foreach ($employees as $index => $fila) {
+                fwrite($archivo_handle, $index + 1 . '|' . implode('|', $fila) . "|\n");
+            }
+
+            // Cerrar el archivo
+            fclose($archivo_handle);
+
+            // Descarga del archivo
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . basename($batchArchivo) . '"');
+            header('Content-Length: ' . filesize($batchArchivo));
+            readfile($batchArchivo);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('denied','Sucedio un error.');
         }
-
-        $batchArchivo = 'eficiente/exports/empleados.txt';
-        // Abrir el archivo en modo escritura
-        ($archivo_handle = fopen($batchArchivo, 'w')) or die('No se puede abrir el archivo.');
-
-        // Iterar sobre los datos y escribir en el archivo
-        foreach ($employees as $index => $fila) {
-            fwrite($archivo_handle, $index + 1 . '|' . implode('|', $fila) . "|\n");
-        }
-
-        // Cerrar el archivo
-        fclose($archivo_handle);
-
-        // Descarga del archivo
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename="' . basename($batchArchivo) . '"');
-        header('Content-Length: ' . filesize($batchArchivo));
-        readfile($batchArchivo);
     }
 
     public function uploadZip(Request $request)
@@ -290,7 +301,6 @@ class EmployeeController extends Controller
 
     public function createEmployee($person)
     {
-
         try {
             DB::beginTransaction();
             $newperson = Person::create([
@@ -354,7 +364,7 @@ class EmployeeController extends Controller
             ]);
             RfcData::create([
                 'person_id' => $newperson->id,
-                'data' => $person
+                'data' => $person,
             ]);
             DB::commit();
         } catch (\Throwable $th) {
@@ -391,15 +401,17 @@ class EmployeeController extends Controller
                 $rfc = trim($datos[1]);
 
                 $respuesta = trim($datos[4]); // Código Postal
-                $employee = Employee::where('rfc', $rfc)->first();
-                if ($employee) {
+                $person = Person::where('rfc', $rfc)->first();
+                if ($person) {
                     if (strpos($respuesta, 'RFC v?lido') !== false) {
-                        $employee->update([
-                            'rfc_verified' => 1,
+                        $person->employee()->update([
+                            'rfc_verified' => 1
                         ]);
                     } else {
-                        $employee->update([
+                        $person->employee()->update([
                             'rfc_verified' => 0,
+                        ]);
+                        $person->update([
                             'comments' => $respuesta,
                         ]);
                     }
