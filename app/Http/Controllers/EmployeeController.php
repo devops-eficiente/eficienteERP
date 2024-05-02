@@ -144,7 +144,7 @@ class EmployeeController extends Controller
                         ];
                     });
             } elseif ($request->opcion == 'all_active') {
-                $persons = Person::with(['employee', 'addresses'])
+                $employees = Person::with(['employee', 'addresses'])
                     ->get()
                     ->map(function ($person) {
                         return [
@@ -154,7 +154,7 @@ class EmployeeController extends Controller
                         ];
                     });
             } elseif ($request->opcion == 'all') {
-                $persons = Person::with(['employee', 'addresses'])
+                $employees = Person::with(['employee', 'addresses'])
                     ->get()
                     ->map(function ($person) {
                         return [
