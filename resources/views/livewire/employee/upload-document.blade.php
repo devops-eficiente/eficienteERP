@@ -1,5 +1,5 @@
 <div>
-    <button class="text-primary hover:text-sky-700" data-fc-target="modalDocument-{{ $person->id }}" data-fc-type="modal"
+    <button class="btn rounded-full border border-primary text-primary hover:bg-primary hover:text-white" data-fc-target="modalDocument-{{ $person->id }}" data-fc-type="modal"
         type="button">
         Verificar RFC
     </button>

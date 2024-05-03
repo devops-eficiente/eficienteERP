@@ -37,11 +37,15 @@ Route::name('admin.')->middleware('auth')->group(function(){
 
         Route::post('crear_documento','createByDocument')->name('createByDocument');
         Route::post('subir_datos','createByData')->name('createByData');
+
+        Route::get('empleado/{id}','show')->name('show_employee');
+        Route::get('empleado/{id}/editar','edit')->name('edit_employee');
+        Route::put('empleado/{id}','update')->name('update_employee');
     });
 
     Route::controller(ClientController::class)->prefix('clientes')->group(function(){
         Route::get('/','index')->name('clients');
-        
+
     });
 });
 

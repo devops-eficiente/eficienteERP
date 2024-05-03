@@ -31,7 +31,7 @@
                 <h4 class="card-title">Empleados</h4>
             </div>
         </div>
-        <div class="p-6">
+        <div class="p-6 card-body">
             <div class="overflow-y-auto overflow-x-auto">
                 <div class="min-w-full inline-block align-middle">
                     <div class="overscroll-y-auto">
@@ -79,13 +79,20 @@
                                             {{ $person->employee->curp }}
                                         </td>
                                         @if (!$person->employee->rfc_verified)
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                                {{ $person->rfc }}
-
+                                            <td
+                                                class=" flex flex-col gap-3 px-6 py-4 whitespace-nowrap text-sm items-center justify-center">
+                                                <span class="text-white bg-red-500 rounded-xl px-4 py-1">
+                                                    {{ $person->rfc }}
+                                                </span>
+                                                <p class="text-xs text-center">
+                                                    No verificado
+                                                    <i class="mgc_close_fill"></i>
+                                                </p>
                                             </td>
                                         @else
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-800 ">
-                                                {{ $person->employee->rfc }}
+                                            <td
+                                                class=" flex flex-col gap-3 px-6 py-4 whitespace-nowrap text-sm text-green-800 items-center justify-center">
+                                                {{ $person->rfc }}
                                                 <p class="text-xs text-center">
                                                     Verificado
                                                     <i class="mgc_check_2_fill"></i>
@@ -93,7 +100,15 @@
                                             </td>
                                         @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $person->comments ?? 'N/A' }}
+                                            SAT: {{ $person->comments ?? 'N/A' }}
+                                            <br>
+                                            @if (!$person->employee->complete)
+                                                Perfil incompleto
+                                            @endif
+                                            <br>
+                                            @if (!$person->employee->rfc_verified)
+                                                RFC no verificado
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <div class="flex flex-col gap-4">
@@ -101,8 +116,13 @@
                                                     @livewire('employee.upload-document', ['person' => $person])
                                                 @endif
                                                 <div>
-                                                    <a class="text-success hover:text-sky-700" href="#">
+                                                    <a class="btn rounded-full border border-success text-success hover:bg-success hover:text-white"
+                                                        href="{{ route('admin.show_employee', $person->rfc) }}">
                                                         Ver
+                                                    </a>
+                                                    <a href="{{ route('admin.edit_employee', $person->rfc) }}"
+                                                        class="btn rounded-full border border-info text-info hover:bg-info hover:text-white">
+                                                        Editar
                                                     </a>
                                                 </div>
                                             </div>
@@ -114,6 +134,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="card-footer p-6">
+            {{ $persons->links('vendor.pagination.tailwind') }}
         </div>
     </div>
 @endsection

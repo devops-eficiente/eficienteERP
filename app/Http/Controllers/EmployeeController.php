@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditEmployeeRequest;
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Models\Address;
 use App\Models\BloodType;
@@ -28,7 +29,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $persons = Person::paginate(10);
+        $persons = Person::paginate(15);
         // return $employees;
         return view('employee.index', compact('persons'));
     }
@@ -39,6 +40,7 @@ class EmployeeController extends Controller
         $instituteHealths = InstituteHealth::all();
         $maritalStatus = MaritalStatus::all();
         $identificationEmployees = IdentificationEmployee::all();
+
         return view('employee.create', compact('bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
     }
 
@@ -61,8 +63,7 @@ class EmployeeController extends Controller
                 'maternal_surname' => $request->maternal_surname,
                 'name' => $request->name,
                 'curp' => $request->curp,
-                'rfc' => $request->rfc,
-                'institute_health_id ' => $request->institute_health_id,
+                'institute_health_id' => $request->institute_health_id,
                 'nss' => $request->nss,
                 'identification_employee_id' => $request->identification_employee_id,
                 'n_identification' => $request->n_identification,
@@ -92,6 +93,70 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
     }
 
+    public function show($id)
+    {
+        $person = Person::where('rfc', $id)->first();
+
+        return view('employee.show', compact('person'));
+    }
+    public function edit($id)
+    {
+        $person = Person::where('rfc', $id)->first();
+        $bloodTypes = BloodType::all();
+        $instituteHealths = InstituteHealth::all();
+        $maritalStatus = MaritalStatus::all();
+        $identificationEmployees = IdentificationEmployee::all();
+        $contact = $person->contacts[0];
+        return view('employee.edit', compact('person', 'contact', 'bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
+    }
+
+    public function update(EditEmployeeRequest $request, $id)
+    {
+        // return $request;
+        $person = Person::find($id);
+        try {
+            DB::beginTransaction();
+            if ($request->rfc != $person->rfc) {
+                $person = Person::create([
+                    'rfc' => $request->rfc,
+                ]);
+                $person->employee()->update([
+                    'rfc_verified' => 0
+                ]);
+            }
+            $person->employee()->update([
+                'paternal_surname' => $request->paternal_surname,
+                'maternal_surname' => $request->maternal_surname,
+                'name' => $request->name,
+                'curp' => $request->curp,
+                'institute_health_id' => $request->institute_health_id,
+                'nss' => $request->nss,
+                'identification_employee_id' => $request->identification_employee_id,
+                'n_identification' => $request->n_identification,
+                'marital_status_id' => $request->marital_status_id,
+                'blood_type_id' => $request->blood_type_id,
+                'gender' => $request->gender,
+                'nationality' => $request->nationality,
+                'birthdate' => $request->birthdate,
+            ]);
+            $contact = Contact::where('person_id',$id)->first();
+            $contact->update([
+                'email' => $request->contacts['email'],
+                'phone' => $request->contacts['telephone'],
+            ]);
+
+            $address = Address::where('person_id',$id)->first();
+            $address->update([
+                'zip_code' => $request->zip_code,
+            ]);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('denied', $th->getMessage());
+        }
+        return redirect()->route('admin.employees')->with('success', 'Empleado actualizado correctamente');
+    }
+
     public function uploadDocument(Request $request, $id)
     {
         $request->validate([
@@ -118,7 +183,7 @@ class EmployeeController extends Controller
             'rfc_verified' => 1,
         ]);
         $person->update([
-            'comments' => null
+            'comments' => null,
         ]);
         Session::forget('employee');
         Session::forget('persona');
