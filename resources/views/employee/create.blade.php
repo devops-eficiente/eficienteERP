@@ -257,7 +257,7 @@
                 </div>
             </div>
         </div>
-        <div class="card mt-6">
+        {{-- <div class="card mt-6">
             <div class="card-header">
                 <div class="flex justify-between items-center">
                     <h4 class="card-title">Contacto de emergecia</h4>
@@ -299,7 +299,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="flex items-center justify-around my-4">
             <button type="submit" class="btn bg-success text-white rounded-full">Crear</button>

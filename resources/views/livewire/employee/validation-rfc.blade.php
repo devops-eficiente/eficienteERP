@@ -21,7 +21,7 @@
         </div>
 
         <div class="card-body">
-            <form action="{{ route('admin.uploadResponseSat') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.employee.uploadResponseSat') }}" method="POST" enctype="multipart/form-data">
                 <div class="p-6 flex flex-col w-full gap-6">
                     @if ($step == 1)
                         <div class="flex items-center text-center">
@@ -82,7 +82,7 @@
 
                             <div
                                 class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                                <a href="{{ route('admin.export_rfc', ['opcion' => $option]) }}">
+                                <a href="{{ route('admin.employee.export_rfc', ['opcion' => $option]) }}">
                                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                         Descarga de archivos
                                     </h5>
@@ -91,7 +91,7 @@
                                     Descarga los archivos que se usaran para validarlo en el sitio del SAT. Despues de
                                     descargarlos da clic en siguiente.
                                 </p>
-                                <a href="{{ route('admin.export_rfc', ['opcion' => $option]) }}"
+                                <a href="{{ route('admin.employee.export_rfc', ['opcion' => $option]) }}"
                                     class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                     Descargar
                                 </a>
@@ -141,7 +141,7 @@
 
                             <div
                                 class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                                <a href="{{ route('admin.export_rfc', ['opcion' => $option]) }}">
+                                <a href="{{ route('admin.employee.export_rfc', ['opcion' => $option]) }}">
                                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                         Cargar Archivo de respuesta
                                     </h5>
@@ -150,7 +150,7 @@
                                     Selecciona el archivo que obtuviste en el portal del SAT y haz clic en el boton de
                                     validar.
                                 </p>
-                                <form action="{{ route('admin.uploadResponseSat') }}" method="POST"
+                                <form action="{{ route('admin.employee.uploadResponseSat') }}" method="POST"
                                     enctype="multipart/form-data">
                                     @csrf
                                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"

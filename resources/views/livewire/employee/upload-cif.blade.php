@@ -5,7 +5,7 @@
     <div class="w-full h-full mt-5 fixed top-0 left-0 z-50 transition-all duration-500 fc-modal hidden">
         <div
             class="sm:max-w-2xl fc-modal-open:opacity-100 duration-500 opacity-0 ease-out transition-all sm:w-full m-3 sm:mx-auto flex flex-col bg-white border shadow-sm rounded-md">
-            <form action="{{ route('admin.check_rfc', $person->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('admin.employee.check_rfc', $person->id) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="flex justify-between items-center py-2.5 px-4 border-b">
                     <h3 class="font-medium text-gray-800">

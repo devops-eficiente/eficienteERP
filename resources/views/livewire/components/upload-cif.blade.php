@@ -14,7 +14,7 @@
         <div class="relative p-4 w-full max-w-2xl max-h-full">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <form action="{{ route('admin.createByData') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.employee.createByData') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">

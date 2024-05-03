@@ -13,7 +13,7 @@
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                 <!-- Modal header -->
-                <form action="{{ route('admin.uploadZip') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('admin.employee.uploadZip') }}" method="post" enctype="multipart/form-data">
 
 
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">

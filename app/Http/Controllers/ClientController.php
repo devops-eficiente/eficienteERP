@@ -26,6 +26,15 @@ class ClientController extends Controller
         return view('client.index', compact('clients'));
     }
 
+    public function create(){
+        $taxRegimes = TaxRegime::all();
+        return view('client.create',compact('taxRegimes'));
+    }
+
+    public function store(Request $request){
+        return $request;
+    }
+
     public function uploadDocument(Request $request, $id)
     {
         $request->validate([

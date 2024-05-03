@@ -30,7 +30,7 @@
                         <span class="sr-only">Close modal</span>
                     </button>
                 </div>
-                <form action="{{ route('admin.createByDocument') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('admin.employee.createByDocument') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <!-- Modal body -->
                     <div class="p-4 md:p-5 space-y-4">

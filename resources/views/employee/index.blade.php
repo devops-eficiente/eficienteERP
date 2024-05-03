@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="flex flex-col md:flex-row my-4 justify-around items-center w-full">
-        <a href="{{ route('admin.validationRfc') }}" class="btn bg-secondary text-white">
+        <a href="{{ route('admin.employee.validationRfc') }}" class="btn bg-secondary text-white">
             Validacion masiva
         </a>
         @livewire('employee.upload-zip')

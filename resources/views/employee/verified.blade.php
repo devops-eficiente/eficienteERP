@@ -419,9 +419,9 @@
     <div class="flex justify-around my-3">
         <a href="{{ route('admin.employees') }}" class="btn bg-secondary text-white">Regresar</a>
         @if ($cont == 0)
-            <a href="{{ route('admin.continue_employee') }}" class="btn bg-success text-white">Continuar</a>
+            <a href="{{ route('admin.employee.continue_employee') }}" class="btn bg-success text-white">Continuar</a>
         @else
-            <a href="{{ route('admin.edit_data_employee') }}" class="btn bg-warning text-white">Corregir errores</a>
+            <a href="{{ route('admin.employee.edit_data_employee') }}" class="btn bg-warning text-white">Corregir errores</a>
         @endif
     </div>
 @endsection

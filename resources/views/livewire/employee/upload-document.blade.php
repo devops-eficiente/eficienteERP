@@ -17,7 +17,7 @@
                 </button>
             </div>
             <div class="px-4 py-8 flex">
-                <form action="{{ route('admin.uploadDocument', $person->id) }}" method="post"
+                <form action="{{ route('admin.employee.uploadDocument', $person->id) }}" method="post"
                     enctype="multipart/form-data">
                     @csrf
 

@@ -46,7 +46,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{route('admin.employees')}}" class="menu-link">
+                        <a href="{{ route('admin.employees') }}" class="menu-link">
                             <span class="menu-text">Ver plantilla</span>
                         </a>
                     </li>
@@ -61,12 +61,12 @@
 
                 <ul class="sub-menu hidden">
                     <li class="menu-item">
-                        <a href="#" class="menu-link">
+                        <a href="{{ route('admin.create_client') }}" class="menu-link">
                             <span class="menu-text">Crear cliente</span>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{route('admin.clients')}}" class="menu-link">
+                        <a href="{{ route('admin.clients') }}" class="menu-link">
                             <span class="menu-text">Ver plantilla</span>
                         </a>
                     </li>
