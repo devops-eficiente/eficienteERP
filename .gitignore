@@ -17,3 +17,4 @@ yarn-error.log
 /.idea
 /.vscode
 public/eficiente/exports/empleados.txt
+/public/eficiente/exports/empleados.txt
