@@ -56,9 +56,9 @@ Route::name('admin.')
             Route::get('/', 'index')->name('clients');
             Route::get('crear', 'create')->name('create_client');
             Route::post('agregar', 'store')->name('store_client');
-            Route::get('empleado/{id}', 'show')->name('show_client');
-            Route::get('empleado/{id}/editar', 'edit')->name('edit_client');
-            Route::put('empleado/{id}', 'update')->name('update_client');
+            Route::get('cliente/{id}', 'show')->name('show_client');
+            Route::get('cliente/{id}/editar', 'edit')->name('edit_client');
+            Route::put('cliente/{id}', 'update')->name('update_client');
 
             Route::get('validacion_masiva', 'validationRfc')->name('client.validationRfc');
 
