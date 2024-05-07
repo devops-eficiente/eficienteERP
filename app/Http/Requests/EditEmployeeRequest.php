@@ -44,6 +44,7 @@ class EditEmployeeRequest extends FormRequest
             // 'emergency_contacts.name' => 'required',
             // 'emergency_contacts.phone' => 'required|digits:10',
             'zip_code' => 'nullable|digits:5',
+            'tax_regime_id' => 'required|exists:tax_regimes,id'
         ];
     }
     public function attributes(): array
@@ -66,6 +67,7 @@ class EditEmployeeRequest extends FormRequest
             'emergency_contacts.name' => 'nombre de emergencia',
             'emergency_contacts.phone' => 'número de emergencia',
             'zip_code' => 'codigo postal',
+            'tax_regime_id' => 'Regimen Fiscal'
         ];
     }
 }

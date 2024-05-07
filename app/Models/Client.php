@@ -12,7 +12,7 @@ class Client extends Model
         'n_client',
         'person_id',
         'company_name',
-        'capital_regime',
+        'capital_regime_id',
         'status',
         'updated_date',
         'rfc_verified',
@@ -24,5 +24,8 @@ class Client extends Model
 
     public function person(){
         return $this->belongsTo(Person::class);
+    }
+    public function capital_regime(){
+        return $this->belongsTo(CapitalRegime::class);
     }
 }

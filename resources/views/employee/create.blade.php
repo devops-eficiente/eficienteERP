@@ -69,6 +69,9 @@
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
+
+                </div>
+                <div class="grid lg:grid-cols-4 gap-6 my-4">
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">CURP</label>
                         <input type="text" id="simpleinput" class="form-input" name="curp"
@@ -91,6 +94,22 @@
                             class="text-gray-800 text-sm font-medium inline-block mb-2">Nacimiento</label>
                         <input class="form-input" id="example-date" type="date" name="birthdate">
                         @error('birthdate')
+                            <span class="text-red-800">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="example-select" class="text-gray-800 text-sm font-medium inline-block mb-2">
+                            Regimen Fiscal
+                        </label>
+                        <select class="form-select" id="example-select" name="tax_regime_id">
+                            <option value="">Selecciona una categoria</option>
+                            @foreach ($taxRegimes as $taxRegime)
+                                <option value="{{ $taxRegime->id }}"
+                                    {{ old('tax_regime_id') == $taxRegime->id ?? 'selected' }}>
+                                    {{ $taxRegime->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('marital_status_id')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>

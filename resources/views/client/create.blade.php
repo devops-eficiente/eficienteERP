@@ -47,17 +47,23 @@
                             Razón social
                         </label>
                         <input type="text" id="simpleinput" class="form-input" name="company_name"
-                            value="{{ old('company_name') }}">
+                            value="{{ old('company_name') }}" required>
                         @error('company_name')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Regimen de capital
-                        </label>
-                        <input type="text" id="simpleinput" class="form-input" name="capital_regime"
-                            value="{{ old('capital_regime') }}">
+
+                        <div>
+                            <label for="example-select" class="text-gray-800 text-sm font-medium inline-block mb-2">Regimen
+                                de capital</label>
+                            <select class="form-select" id="example-select" name="capital_regime_id" required>
+                                <option value="">Selecciona el regimen</option>
+                                @foreach ($capitalRegimes as $capitalRegime)
+                                    <option value="{{ $capitalRegime->id }}">{{ $capitalRegime->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         @error('capital_regime')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
@@ -72,24 +78,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="flex gap-6 my-4">
-                    <div>
-                        <h6 class="text-sm mb-2">Selecciona el Regimen fiscal</h6>
-                        <div class="grid grid-cols-3 gap-4">
-                            @foreach ($taxRegimes as $taxRegime)
-                                <div class="form-check flex gap-2">
-                                    <input type="checkbox" class="form-checkbox rounded text-primary" id="customCheck{{$taxRegime->id}}">
-                                    <label class="ms-1.5" for="customCheck{{$taxRegime->id}}">
-                                        {{ $taxRegime->code }}
-                                        -
-                                        {{ $taxRegime->name }}
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="grid lg:grid-cols-3 gap-6 my-4">
+                <div class="grid lg:grid-cols-4 gap-6 my-4">
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">Correo
                             Electronico</label>
@@ -100,7 +89,7 @@
                                 <i class="mgc_mail_line text-lg text-gray-400"></i>
                             </div>
                         </div>
-                        @error('contacts.email')
+                        @error('email')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
@@ -115,7 +104,7 @@
                                 <i class="mgc_cellphone_line text-lg text-gray-400"></i>
                             </div>
                         </div>
-                        @error('contacts.telephone')
+                        @error('phone')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
@@ -124,10 +113,48 @@
                             Código postal
                         </label>
                         <input type="text" id="simpleinput" class="form-input" name="zip_code"
-                            value="{{ old('zip_code') }}">
+                            value="{{ old('zip_code') }}" required>
                         @error('zip_code')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
+                    </div>
+                    <div>
+
+                        <div>
+                            <label for="example-select" class="text-gray-800 text-sm font-medium inline-block mb-2">
+                                Tipo de regimen
+                            </label>
+                            <select class="form-select" id="example-select" name="regimen" required>
+                                <option value="">Selecciona el tipo de regimen</option>
+                                <option value="fisica">Fisica</option>
+                                <option value="moral">Moral</option>
+
+                            </select>
+                        </div>
+                        @error('capital_regime')
+                            <span class="text-red-800">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="flex gap-6 my-4 flex-col">
+                    <div>
+                        <h6 class="text-sm mb-2">Selecciona el Regimen fiscal</h6>
+                        @error('tax_regimes')
+                            <span class="text-red-800">{{ $message }}</span>
+                        @enderror
+                        <div class="grid grid-cols-3 gap-4">
+                            @foreach ($taxRegimes as $taxRegime)
+                                <div class="form-check flex gap-2">
+                                    <input type="checkbox" class="form-checkbox rounded text-primary" value="{{$taxRegime->id}}" name="tax_regimes[]"
+                                        id="customCheck{{ $taxRegime->id }}">
+                                    <label class="ms-1.5" for="customCheck{{ $taxRegime->id }}">
+                                        {{ $taxRegime->code }}
+                                        -
+                                        {{ $taxRegime->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,7 +165,7 @@
             <button type="button" class="btn bg-warning text-white rounded-full">Cancelar</button>
         </div>
     </form>
-    @livewire('components.upload-document', ['type' => 'employee'])
+    @livewire('components.upload-document', ['type' => 'client'])
 @endsection
 
 @section('script')

@@ -13,7 +13,7 @@
             <div class="flex items-center gap-2">
                 <i class="mgc_right_line text-lg flex-shrink-0 text-slate-400 rtl:rotate-180"></i>
                 <a href="#" class="text-sm font-medium text-slate-700 dark:text-slate-400" aria-current="page">
-                    Ver empleado
+                    Ver cliente
                 </a>
             </div>
         </div>
@@ -30,63 +30,34 @@
         <div class="card">
             <div class="card-header">
                 <div class="flex justify-between items-center">
-                    <h4 class="card-title">Empleado No. {{ $person->employee->n_employee }}</h4>
+                    <h4 class="card-title">Cliente No. {{ $person->client->n_client }}</h4>
                 </div>
             </div>
             <div class=" flex flex-col card-body py-4 gap-5">
                 <h2 class="text-center mb-2 text-gray-800">
-                    Nombre:
-                    {{ $person->employee->name }} {{ $person->employee->paternal_surname }}
-                    {{ $person->employee->maternal_surname }}
+                    Razon social:
+                    {{ $person->client->company_name }}
                 </h2>
+                @if ($person->client->capital_regime_id)
+                    <h2 class="text-center mb-2 text-gray-800">
+                        Regimen de capital:
+                        {{ $person->client->capital_regime->acronym }}
+                    </h2>
+                @endif
                 <h2 class="text-center mb-2 text-gray-800">
                     RFC:
                     {{ $person->rfc }}
                 </h2>
-                <h2 class="text-center mb-2 text-gray-800">
-                    CURP:
-                    {{ $person->employee->curp }}
-                </h2>
-                @if ($person->employee->institute_health_id)
-                    <h2 class="text-center mb-2 text-gray-800">
-                        Seguro:
-                        {{ $person->employee->institute_health->acronym }}
-                        <br>
-                        NSS: {{ $person->employee->nss }}
-                    </h2>
-                @endif
-                @if ($person->employee->identification_employee)
+
+                @if ($person->client->identification_employee)
                     <h2 class="text-center mb-2 text-gray-800">
                         Tipo de identificación:
-                        {{ $person->employee->identification_employee->name }}
+                        {{ $person->client->identification_employee->name }}
                         <br>
-                        Número: {{ $person->employee->n_identification }}
+                        Número: {{ $person->client->n_identification }}
                     </h2>
                 @endif
-                <h2 class="text-center mb-2 text-gray-800">
-                    Genero:
-                    {{ $person->employee->gender }}
-                </h2>
-                <h2 class="text-center mb-2 text-gray-800">
-                    Nacionalidad:
-                    {{ $person->employee->nationality }}
-                </h2>
-                <h2 class="text-center mb-2 text-gray-800">
-                    Nacimiento:
-                    {{ $person->employee->birthdate }}
-                </h2>
-                @if ($person->employee->marital_status)
-                    <h2 class="text-center mb-2 text-gray-800">
-                        Estado civil:
-                        {{ $person->employee->marital_status->name }}
-                    </h2>
-                @endif
-                @if ($person->employee->blood_type)
-                    <h2 class="text-center mb-2 text-gray-800">
-                        Grupo sanguineo:
-                        {{ $person->employee->blood_type->name }}
-                    </h2>
-                @endif
+
             </div>
 
         </div>

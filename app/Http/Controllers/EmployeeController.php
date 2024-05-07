@@ -6,6 +6,7 @@ use App\Http\Requests\EditEmployeeRequest;
 use App\Http\Requests\EmployeeStoreRequest;
 use App\Models\Address;
 use App\Models\BloodType;
+use App\Models\CapitalRegime;
 use App\Models\Client;
 use App\Models\Contact;
 use App\Models\Employee;
@@ -29,7 +30,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $persons = Person::paginate(15);
+        $persons = Person::getEmployees();
         // return $employees;
         return view('employee.index', compact('persons'));
     }
@@ -40,8 +41,9 @@ class EmployeeController extends Controller
         $instituteHealths = InstituteHealth::all();
         $maritalStatus = MaritalStatus::all();
         $identificationEmployees = IdentificationEmployee::all();
+        $taxRegimes = TaxRegime::all();
 
-        return view('employee.create', compact('bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
+        return view('employee.create', compact('taxRegimes','bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
     }
 
     public function store(EmployeeStoreRequest $request)
@@ -50,14 +52,13 @@ class EmployeeController extends Controller
         try {
             DB::beginTransaction();
             $ult = Employee::max('id') + 1;
-            $data['n_employee'] = 'E' . $ult;
             $person = Person::create([
                 'rfc' => $request->rfc,
                 'type' => 'employee',
-                'regimen' => 'fiscal',
+                'regimen' => 'fisica',
             ]);
             Employee::create([
-                'n_employee' => 'E' . $ult,
+                'n_employee' => 'E-' . $ult,
                 'person_id' => $person->id,
                 'paternal_surname' => $request->paternal_surname,
                 'maternal_surname' => $request->maternal_surname,
@@ -85,6 +86,7 @@ class EmployeeController extends Controller
                 'person_id' => $person->id,
                 'zip_code' => $request->zip_code,
             ]);
+            $person->tax_regimes()->attach($request->tax_regime_id);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -107,7 +109,8 @@ class EmployeeController extends Controller
         $maritalStatus = MaritalStatus::all();
         $identificationEmployees = IdentificationEmployee::all();
         $contact = $person->contacts[0];
-        return view('employee.edit', compact('person', 'contact', 'bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
+        $taxRegimes = TaxRegime::all();
+        return view('employee.edit', compact('taxRegimes','person', 'contact', 'bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
     }
 
     public function update(EditEmployeeRequest $request, $id)
@@ -121,7 +124,7 @@ class EmployeeController extends Controller
                     'rfc' => $request->rfc,
                 ]);
                 $person->employee()->update([
-                    'rfc_verified' => 0
+                    'rfc_verified' => 0,
                 ]);
             }
             $person->employee()->update([
@@ -139,16 +142,18 @@ class EmployeeController extends Controller
                 'nationality' => $request->nationality,
                 'birthdate' => $request->birthdate,
             ]);
-            $contact = Contact::where('person_id',$id)->first();
+            $contact = Contact::where('person_id', $id)->first();
             $contact->update([
                 'email' => $request->contacts['email'],
                 'phone' => $request->contacts['telephone'],
             ]);
 
-            $address = Address::where('person_id',$id)->first();
+            $address = Address::where('person_id', $id)->first();
             $address->update([
                 'zip_code' => $request->zip_code,
             ]);
+            $person->tax_regimes()->detach();
+            $person->tax_regimes()->attach($request->tax_regime_id);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -157,8 +162,7 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Empleado actualizado correctamente');
     }
 
-    public function uploadDocument(Request $request, $id)
-    {
+    public function uploadDocument(Request $request, $id){
         $request->validate([
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
@@ -200,7 +204,7 @@ class EmployeeController extends Controller
             $person->update([
                 'rfc' => $persona->rfc,
                 'type' => 'employee',
-                'regimen' => 'fiscal',
+                'regimen' => 'fisica',
                 'start_date' => Carbon::parse($persona->fecha_inicio_operaciones->date)->format('Y-m-d'),
                 'status' => $persona->situacion_contribuyente,
             ]);
@@ -212,9 +216,9 @@ class EmployeeController extends Controller
                 'curp' => $persona->curp,
                 'rfc_verified' => 1,
             ]);
+            $person->tax_regimes()->detach();
             foreach ($persona->regimenes as $regimen) {
                 $taxRegime = TaxRegime::where('code', $regimen->regimen_id)->first();
-                $person->tax_regimes()->detach();
                 if ($taxRegime) {
                     if (isset($regimen->fecha_baja)) {
                         $status = 0;
@@ -257,8 +261,7 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Datos Verificados correctamente.');
     }
 
-    public function checkCIF(Request $request, $id)
-    {
+    public function checkCIF(Request $request, $id){
         Session::forget('employee');
         Session::forget('persona');
         try {
@@ -272,8 +275,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function export_rfc(Request $request)
-    {
+    public function export_rfc(Request $request){
         try {
             if ($request->opcion == 'rfc_invalid') {
                 $employees = Person::with(['employee', 'addresses'])
@@ -327,8 +329,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function uploadZip(Request $request)
-    {
+    public function uploadZip(Request $request){
         $zipFilePath = $request->file('zip');
         $extractPath = public_path('eficiente/extracted_files'); // Ruta donde se extraerán los archivos
 
@@ -347,7 +348,7 @@ class EmployeeController extends Controller
                     try {
                         $rutaDocumento = $extractedFilePath;
                         $persona = $this->readPdf($rutaDocumento);
-                        if ($persona->tipo == 'fiscal') {
+                        if ($persona->tipo == 'fisica') {
                             $this->createEmployee($persona);
                         }
                         // $person[$i] = $persona;
@@ -389,7 +390,7 @@ class EmployeeController extends Controller
         $persona = json_decode($persona);
         $data = $persona;
         if ($rfc->isFisica()) {
-            $data->tipo = 'fiscal';
+            $data->tipo = 'fisica';
         }
         if ($rfc->isMoral()) {
             $data->tipo = 'moral';
@@ -397,8 +398,7 @@ class EmployeeController extends Controller
         return $data;
     }
 
-    public function searchCIF($path)
-    {
+    public function searchCIF($path){
         $parser = new Parser();
         try {
             $documento = $parser->parseFile($path); // Parsear el documento PDF
@@ -417,8 +417,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function searchRFC($path)
-    {
+    public function searchRFC($path){
         $parser = new Parser();
         try {
             $documento = $parser->parseFile($path);
@@ -438,21 +437,20 @@ class EmployeeController extends Controller
         }
     }
 
-    public function createEmployee($person)
-    {
+    public function createEmployee($person){
         try {
             DB::beginTransaction();
             $newperson = Person::create([
                 'rfc' => $person->rfc,
                 'type' => 'employee',
-                'regimen' => 'fiscal',
+                'regimen' => 'fisica',
                 'start_date' => Carbon::parse($person->fecha_inicio_operaciones->date)->format('Y-m-d'),
                 'status' => $person->situacion_contribuyente,
             ]);
 
             $ult = Employee::max('id') + 1;
             Employee::create([
-                'n_employee' => 'E' . $ult,
+                'n_employee' => 'E-' . $ult,
                 'person_id' => $newperson->id,
                 'paternal_surname' => $person->apellido_paterno,
                 'maternal_surname' => $person->apellido_materno,
@@ -565,8 +563,7 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Datos leidos corectamente.');
     }
 
-    public function createByDocument(Request $request)
-    {
+    public function createByDocument(Request $request){
         $request->validate([
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
@@ -574,7 +571,7 @@ class EmployeeController extends Controller
             $rutaDocumento = $request->file('pdf');
             $persona = $this->readPdf($rutaDocumento);
             if ($request->type == 'employee') {
-                if ($persona->tipo == 'fiscal') {
+                if ($persona->tipo == 'fisica') {
                     $this->createEmployee($persona);
                 } else {
                     return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
@@ -592,12 +589,11 @@ class EmployeeController extends Controller
         }
     }
 
-    public function createByData(Request $request)
-    {
+    public function createByData(Request $request){
         try {
             $persona = $this->checkRFC($request->rfc, $request->cif);
 
-            if ($persona->tipo == 'fiscal') {
+            if ($persona->tipo == 'fisica') {
                 $this->createEmployee($persona);
             } else {
                 return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');

@@ -23,9 +23,7 @@
             Validacion masiva
         </button> --}}
 
-        @livewire('employee.upload-zip')
-
-        {{-- @livewire('client.validation-rfc') --}}
+        @livewire('client.upload-zip')
 
     </div>
     <div class="card">
@@ -43,55 +41,85 @@
                             <thead>
                                 <tr>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-center">
+                                        ID Cliente
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-center">
                                         Razon social
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-center">
                                         Regimen Capital
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                        class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-center">
                                         RFC
                                     </th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">
+                                        class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-center">
+                                        Observaciones
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 ext-xs font-medium text-gray-500 uppercase text-center">
                                         Accion
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                                @foreach ($clients as $client)
+                                @foreach ($persons as $person)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $client->company_name }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800  text-center">
+                                            {{ $person->client->n_client }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                            {{ $client->capital_regime }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800  text-center">
+                                            {{ $person->client->company_name }}
                                         </td>
-                                        @if (!$client->rfc_verified)
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 ">
-                                                {{ $client->rfc }}
-
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800  text-center">
+                                            {{ $person->client->capital_regime->acronym ?? ' N/A' }}
+                                        </td>
+                                        @if (!$person->client->rfc_verified)
+                                            <td
+                                                class=" flex flex-col gap-3 px-6 py-4 whitespace-nowrap text-sm items-center justify-center text-center">
+                                                <span class="text-white bg-red-500 rounded-xl px-4 py-1">
+                                                    {{ $person->rfc }}
+                                                </span>
+                                                <p class="text-xs text-center">
+                                                    No verificado
+                                                    <i class="mgc_close_fill"></i>
+                                                </p>
                                             </td>
                                         @else
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-800 ">
-                                                {{ $client->rfc }}
+                                            <td
+                                                class=" flex flex-col gap-3 px-6 py-4 whitespace-nowrap text-sm text-green-800 items-center justify-center text-center">
+                                                {{ $person->rfc }}
                                                 <p class="text-xs text-center">
                                                     Verificado
                                                     <i class="mgc_check_2_fill"></i>
                                                 </p>
                                             </td>
                                         @endif
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">
+                                            SAT: {{ $person->comments ?? 'N/A' }}
+                                            <br>
+                                            @if (!$person->client->rfc_verified)
+                                                RFC no verificado
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                             <div class="flex flex-col gap-4">
-                                                @if (!$client->rfc_verified)
-                                                    @livewire('client.upload-document', ['client' => $client])
+                                                @if (!$person->client->rfc_verified)
+                                                    @livewire('client.upload-document', ['person' => $person])
                                                 @endif
                                                 <div>
-                                                    <a class="text-success hover:text-sky-700" href="#">
+                                                    <a class="btn rounded-full border border-success text-success hover:bg-success hover:text-white"
+                                                        href="{{ route('admin.show_client', $person->rfc) }}">
                                                         Ver
                                                     </a>
+                                                    {{-- <a href="{{ route('admin.edit_client', $person->rfc) }}"
+                                                        class="btn rounded-full border border-info text-info hover:bg-info hover:text-white">
+                                                        Editar
+                                                    </a> --}}
                                                 </div>
                                             </div>
                                         </td>

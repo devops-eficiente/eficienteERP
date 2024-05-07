@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('rfc')->comment('RFC Empleado');
             $table->enum('type',['employee','client'])->comment('Cliente o Empleado');
-            $table->enum('regimen',['fiscal','moral'])->comment('Tipo de regimen');
+            $table->enum('regimen',['fisica','moral'])->comment('Tipo de regimen');
             $table->date('start_date')->nullable()->comment('Fecha de inicio de operaciones');
             $table->string('status')->nullable()->comment('Estado del padron');
             $table->string('comments')->nullable()->comment('Comentarios del SAT');
