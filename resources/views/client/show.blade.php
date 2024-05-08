@@ -19,10 +19,10 @@
         </div>
     </div>
     <div class="flex flex-col md:flex-row my-4 justify-around items-center w-full">
-        <a href="#" class="btn bg-secondary text-white">
+        {{-- <a href="#" class="btn bg-secondary text-white">
             Editar
-        </a>
-        <a href="{{ route('admin.employees') }}" class="btn bg-info text-white">
+        </a> --}}
+        <a href="{{ route('admin.clients') }}" class="btn bg-info text-white">
             Regresar
         </a>
     </div>
