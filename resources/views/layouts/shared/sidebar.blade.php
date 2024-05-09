@@ -98,7 +98,7 @@
             </li>
             <li class="menu-item">
                 <a href="{{ route('admin.webservice') }}" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_wallet_4_fill"></i></span>
+                    <span class="menu-icon"><i class="mgc_world_fill"></i></span>
                     <span class="menu-text"> WebService </span>
                 </a>
             </li>

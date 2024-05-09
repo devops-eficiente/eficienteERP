@@ -1,34 +1,39 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Livewire;
 
-use Illuminate\Http\Request;
-use App\Services\EstatusOrdenService;
-use DOMDocument;
-use Illuminate\Support\Facades\Http;
-use PhpParser\Node\Stmt\Return_;
+use Livewire\Component;
 use SimpleXMLElement;
 
-class WebServiceController extends Controller
+class WebServiceTest extends Component
 {
-    public function index()
+    public $motivo,
+        $mensaje,
+        $devolucionId,
+        $causa,
+        $search = false;
+    public function render()
+    {
+        return view('livewire.web-service-test');
+    }
+    public function submitForm()
     {
         // Construye el cuerpo del mensaje SOAP
         $xml =
             '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
-    <soapenv:Header/>
-    <soapenv:Body>
-       <tem:_EstatusOrden>
-          <tem:id>12345</tem:id>
-          <tem:empresa>RED_ICH</tem:empresa>
-          <tem:folioOrigen>20240430133430</tem:folioOrigen>
-          <tem:estado>Liquidada</tem:estado>
-          <tem:causaDevolucion>
-            Prueba Laravel
-          </tem:causaDevolucion>
-       </tem:_EstatusOrden>
-    </soapenv:Body>
-    </soapenv:Envelope>';
+                <soapenv:Header/>
+                <soapenv:Body>
+                   <tem:_EstatusOrden>
+                      <tem:id>12345</tem:id>
+                      <tem:empresa>RED_ICH</tem:empresa>
+                      <tem:folioOrigen>20240430133430</tem:folioOrigen>
+                      <tem:estado>Liquidada</tem:estado>
+                      <tem:causaDevolucion>' .
+            $this->motivo .
+            '</tem:causaDevolucion>
+                   </tem:_EstatusOrden>
+                </soapenv:Body>
+                </soapenv:Envelope>';
 
         // Define los encabezados de la solicitud
         $headers = ['Content-Type: text/xml;charset=UTF-8', 'Content-Length: ' . strlen($xml), 'Accept-Encoding: gzip,deflate,br', 'SOAPAction: "http://tempuri.org/IEstatusOrdenService/_EstatusOrden"'];
@@ -83,17 +88,22 @@ class WebServiceController extends Controller
                 // $this->mensaje = $mensaje[0];
                 // $this->causa = $causaDevolucion[0];
                 // $this->devolucionId = $causaDevolucionID[0];
-                $motivo = 'Prueba Laravel';
-                $mensaje = strval($mensaje[0]);
-                $causa = strval($causaDevolucion[0]);
-                $devolucionId = strval($causaDevolucionID[0]);
+                $this->mensaje = strval($mensaje[0]);
+                $this->causa = strval($causaDevolucion[0]);
+                $this->devolucionId = strval($causaDevolucionID[0]);
+                $this->search = true;
             } catch (\Throwable $th) {
+                $this->mensaje = $th->getMessage();
             }
         }
 
         // Cierra la conexión cURL
         curl_close($ch);
         unlink($archivo_respuesta);
-        return view('webservice.index',compact('mensaje','causa','devolucionId','motivo'));
+    }
+
+    public function delete()
+    {
+        $this->reset(['mensaje', 'causa', 'devolucionId', 'search']);
     }
 }
