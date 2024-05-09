@@ -45,56 +45,53 @@ class WebServiceController extends Controller
             if (curl_errno($ch)) {
                 echo 'Error en la solicitud SOAP: ' . curl_error($ch);
             } else {
-                try {
-                    //code...
-                    // Procesa la respuesta
-                    // $response_xml = simplexml_load_string($response);
-                    $archivo_respuesta = 'eficiente/respuesta.xml';
+                //code...
+                // Procesa la respuesta
+                // $response_xml = simplexml_load_string($response);
+                $archivo_respuesta = 'eficiente/respuesta.xml';
 
-                    // Intenta abrir el archivo para escritura
-                    if ($archivo = fopen($archivo_respuesta, 'w')) {
-                        // Escribe la respuesta en el archivo
-                        fwrite($archivo, $response);
+                // Intenta abrir el archivo para escritura
+                if ($archivo = fopen($archivo_respuesta, 'w')) {
+                    // Escribe la respuesta en el archivo
+                    fwrite($archivo, $response);
 
-                        // Cierra el archivo
-                        fclose($archivo);
+                    // Cierra el archivo
+                    fclose($archivo);
 
-                        echo "La respuesta se ha guardado correctamente en el archivo '$archivo_respuesta'.";
-                    } else {
-                        echo 'Error al abrir el archivo para escribir la respuesta.';
-                    }
-                    $xmlContent = file_get_contents($archivo_respuesta);
-
-                    // Crear un objeto SimpleXMLElement con el contenido del XML
-                    $xml = new SimpleXMLElement($xmlContent);
-
-                    // Definir el namespace utilizado en el XML
-                    $xml->registerXPathNamespace('s', 'http://schemas.xmlsoap.org/soap/envelope/');
-                    $xml->registerXPathNamespace('a', 'http://schemas.datacontract.org/2004/07/STP');
-
-                    // Utilizar XPath para extraer los valores deseados
-                    $mensaje = $xml->xpath('//a:Mensaje');
-                    $causaDevolucionID = $xml->xpath('//a:CausaDevolucionID');
-                    $causaDevolucion = $xml->xpath('//a:CausaDevolucion');
-
-                    // Mostrar los valores obtenidos
-                    // dd(strval($mensaje[0]));
-                    // $this->mensaje = $mensaje[0];
-                    // $this->causa = $causaDevolucion[0];
-                    // $this->devolucionId = $causaDevolucionID[0];
-                    $motivo = 'Prueba Laravel';
-                    $mensaje = strval($mensaje[0]);
-                    $causa = strval($causaDevolucion[0]);
-                    $devolucionId = strval($causaDevolucionID[0]);
-                } catch (\Throwable $th) {
-                    return back()->with('denied','Error al conectar al LINK');
+                    echo "La respuesta se ha guardado correctamente en el archivo '$archivo_respuesta'.";
+                } else {
+                    echo 'Error al abrir el archivo para escribir la respuesta.';
                 }
+                $xmlContent = file_get_contents($archivo_respuesta);
+
+                // Crear un objeto SimpleXMLElement con el contenido del XML
+                $xml = new SimpleXMLElement($xmlContent);
+
+                // Definir el namespace utilizado en el XML
+                $xml->registerXPathNamespace('s', 'http://schemas.xmlsoap.org/soap/envelope/');
+                $xml->registerXPathNamespace('a', 'http://schemas.datacontract.org/2004/07/STP');
+
+                // Utilizar XPath para extraer los valores deseados
+                $mensaje = $xml->xpath('//a:Mensaje');
+                $causaDevolucionID = $xml->xpath('//a:CausaDevolucionID');
+                $causaDevolucion = $xml->xpath('//a:CausaDevolucion');
+
+                // Mostrar los valores obtenidos
+                // dd(strval($mensaje[0]));
+                // $this->mensaje = $mensaje[0];
+                // $this->causa = $causaDevolucion[0];
+                // $this->devolucionId = $causaDevolucionID[0];
+                $motivo = 'Prueba Laravel';
+                $mensaje = strval($mensaje[0]);
+                $causa = strval($causaDevolucion[0]);
+                $devolucionId = strval($causaDevolucionID[0]);
             }
 
             // Cierra la conexión cURL
             curl_close($ch);
             unlink($archivo_respuesta);
         } catch (\Throwable $th) {
+            return back()->with('denied', 'Error al conectar al LINK');
             //throw $th;
         }
         // Construye el cuerpo del mensaje SOAP
