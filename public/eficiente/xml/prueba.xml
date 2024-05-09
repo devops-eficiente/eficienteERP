@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <tem:_EstatusOrden>
+            <!--Optional:-->
+            <tem:id>12345</tem:id>
+            <!--Optional:-->
+            <tem:empresa>RED_ICH</tem:empresa>
+            <!--Optional:-->
+            <tem:folioOrigen>20240430133430</tem:folioOrigen>
+            <!--Optional:-->
+            <tem:estado>Liquidada</tem:estado>
+            <!--Optional:-->
+            <tem:causaDevolucion>PRueba laravel</tem:causaDevolucion>
+        </tem:_EstatusOrden>
+    </soapenv:Body>
+</soapenv:Envelope>

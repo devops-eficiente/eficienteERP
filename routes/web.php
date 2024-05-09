@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\WebServiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,5 +75,9 @@ Route::name('admin.')
 
             Route::post('crear_documento', 'createByDocument')->name('client.createByDocument');
             Route::post('subir_datos', 'createByData')->name('client.createByData');
+        });
+
+        Route::controller(WebServiceController::class)->group(function(){
+            Route::get('webservice','index')->name('webservice');
         });
     });
