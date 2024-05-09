@@ -87,6 +87,7 @@ class WebServiceController extends Controller
                     $causa = strval($causaDevolucion[0]);
                     $devolucionId = strval($causaDevolucionID[0]);
                 } catch (\Throwable $th) {
+                    return back()->with('denied','Error al conectar al LINK');
                 }
             }
 
