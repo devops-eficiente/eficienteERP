@@ -58,9 +58,9 @@ class WebServiceController extends Controller
                     // Cierra el archivo
                     fclose($archivo);
 
-                    echo "La respuesta se ha guardado correctamente en el archivo '$archivo_respuesta'.";
+                    // echo "La respuesta se ha guardado correctamente en el archivo '$archivo_respuesta'.";
                 } else {
-                    echo 'Error al abrir el archivo para escribir la respuesta.';
+                    // echo 'Error al abrir el archivo para escribir la respuesta.';
                 }
                 $xmlContent = file_get_contents($archivo_respuesta);
 
