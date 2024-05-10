@@ -78,6 +78,6 @@ Route::name('admin.')
         });
 
         Route::controller(WebServiceController::class)->group(function(){
-            Route::get('webservice','index')->name('webservice');
+            Route::get('webservice','index')->name('webservice')->middleware('cors');
         });
     });
