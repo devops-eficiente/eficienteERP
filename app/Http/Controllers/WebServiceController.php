@@ -13,6 +13,10 @@ class WebServiceController extends Controller
 {
     public function index()
     {
+        $motivo = '';
+        $mensaje = '';
+        $causa = '';
+        $devolucionId = '';
         try {
             $xml = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/">
     <soapenv:Header/>
