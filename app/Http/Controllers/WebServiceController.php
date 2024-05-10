@@ -108,7 +108,7 @@ class WebServiceController extends Controller
     public function index()
     {
         // Define la URL del WSDL
-        $wsdlUrl = 'http://187.188.173.92:49330/EstatusOrdenService.svc?singleWsdl';
+        $wsdlUrl = 'http://187.188.173.92:49330/EstatusOrdenService.svc?wsdl';
 
         // Crea una instancia de SoapClient con el WSDL
         $client = new SoapClient($wsdlUrl);
