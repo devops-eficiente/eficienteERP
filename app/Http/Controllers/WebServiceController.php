@@ -110,8 +110,20 @@ class WebServiceController extends Controller
         // Define la URL del WSDL
         $wsdlUrl = 'http://187.188.173.92:49330/EstatusOrdenService.svc?wsdl';
 
+        $options = [
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'trace' => 1,
+            'stream_context' => stream_context_create([
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true,
+                ],
+            ]),
+        ];
+
         // Crea una instancia de SoapClient con el WSDL
-        $client = new SoapClient($wsdlUrl);
+        $client = new SoapClient($wsdlUrl, $options);
 
         // Define los parámetros del método _EstatusOrden
         $params = [
