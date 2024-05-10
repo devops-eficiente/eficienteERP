@@ -91,7 +91,7 @@ class WebServiceController extends Controller
             curl_close($ch);
             unlink($archivo_respuesta);
         } catch (\Throwable $th) {
-            return back()->with('denied', 'Error al conectar al LINK');
+            return back()->with('denied', $th->getMessage());
             //throw $th;
         }
         // Construye el cuerpo del mensaje SOAP
