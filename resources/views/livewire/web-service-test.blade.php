@@ -1,13 +1,13 @@
 <form wire:submit.prevent="submitForm">
     <div class="flex flex-col gap-6 p-10">
 
-        @if (!$search)
+        @if ($search)
             <button type="button" class="btn bg-primary text-white" wire:click.prefetch='delete'>Solicitar nueva</button>
         @else
             <div>
                 <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">Ingresa el
                     motivo</label>
-                <input type="text" id="simpleinput" class="form-input" wire:model.lazy='motivo' required>
+                <input type="text" id="simpleinput" class="form-input" wire:model.lazy='motivo' placeholder="Ingresa el motivo" required>
             </div>
             <button type="submit" class="btn bg-success text-white">Enviar solicitud</button>
         @endif

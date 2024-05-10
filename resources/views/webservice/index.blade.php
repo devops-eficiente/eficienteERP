@@ -26,8 +26,8 @@
             </div>
         </div>
         <div class="p-6 card-body">
-            {{-- @livewire('web-service-test') --}}
-            <div class="p-6 card-body">
+            @livewire('web-service-test')
+            {{-- <div class="p-6 card-body">
                 <div class="overflow-y-auto overflow-x-auto">
                     <div class="min-w-full inline-block align-middle">
                         <div class="overscroll-y-auto">
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 @endsection

@@ -107,30 +107,37 @@ class WebServiceController extends Controller
 
     public function index()
     {
-        // Define la URL del WSDL
-        $wsdlUrl = 'http://187.188.173.92:49330/EstatusOrdenService.svc?wsdl';
+        // // Define la URL del WSDL
+        // $wsdlUrl = 'http://187.188.173.92:49330/EstatusOrdenService.svc?wsdl';
 
-        // Crea una instancia de SoapClient con el WSDL
-        $client = new SoapClient($wsdlUrl);
+        // // Crea una instancia de SoapClient con el WSDL
+        // $client = new SoapClient($wsdlUrl);
 
-        // Define los parámetros del método _EstatusOrden
-        $params = [
-            'id' => 12345,
-            'empresa' => 'RED_ICH',
-            'folioOrigen' => '20240430133430',
-            'estado' => 'Liquidada',
-            'causaDevolucion' => 'g',
-        ];
+        // // Define los parámetros del método _EstatusOrden
+        // $params = [
+        //     'id' => 12345,
+        //     'empresa' => 'RED_ICH',
+        //     'folioOrigen' => '20240430133430',
+        //     'estado' => 'Liquidada',
+        //     'causaDevolucion' => 'Prueba Laravel local',
+        // ];
 
-        // Llama al método _EstatusOrden
-        try {
-            $response = $client->_EstatusOrden($params);
-            // Procesa la respuesta
-            // ...
-            return $response;
-            dd($response);
-        } catch (SoapFault $fault) {
-            echo 'Error en la solicitud SOAP: ' . $fault->getMessage();
-        }
+
+        // // Llama al método _EstatusOrden
+        // try {
+        //     $response = $client->_EstatusOrden($params);
+        //     // Procesa la respuesta
+        //     // ...
+        //     // return $response;
+        //     $motivo = $response->_EstatusOrdenResult->CausaDevolucion;
+        //     $devolucionId = $response->_EstatusOrdenResult->CausaDevolucionID;
+        //     $mensaje = $response->_EstatusOrdenResult->Mensaje;
+        //     $causa = $response->_EstatusOrdenResult->CausaDevolucion;
+        //     return view('webservice.index', compact('mensaje', 'causa', 'devolucionId', 'motivo'));
+        //     dd($response);
+        // } catch (SoapFault $fault) {
+        //     echo 'Error en la solicitud SOAP: ' . $fault->getMessage();
+        // }
+        return view('webservice.index');
     }
 }
