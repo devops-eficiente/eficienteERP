@@ -36,6 +36,9 @@ class Person extends Model
     public function tax_regimes(){
         return $this->belongsToMany(TaxRegime::class)->withPivot('status','end_date','start_date');
     }
+    public function company(){
+        return $this->belongsTo(Company::class);
+    }
 
     /**
      * Obtiene una colección de Persons de tipo clientes.

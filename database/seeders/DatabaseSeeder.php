@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             StateSeeder::class,
             CitySeeder::class,
             CapitalRegimeSeeder::class,
+            ModuleSeeder::class,
         ]);
     }
 }
