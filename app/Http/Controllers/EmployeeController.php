@@ -97,7 +97,12 @@ class EmployeeController extends Controller
 
     public function show($id)
     {
-        $person = Person::where('rfc', $id)->first();
+        try {
+            $person = Person::where('rfc', $id)->firstorfail();
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('denied','Empleado no encontrado');
+        }
 
         return view('employee.show', compact('person'));
     }

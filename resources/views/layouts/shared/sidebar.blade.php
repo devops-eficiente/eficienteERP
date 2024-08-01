@@ -1,5 +1,7 @@
 <div class="app-menu">
-
+    @php
+        auth()->user()->company;
+    @endphp
     <!-- Sidenav Brand Logo -->
     <a href="#" class="logo-box">
         <!-- Light Brand Logo -->
@@ -29,80 +31,100 @@
             <li class="menu-item">
                 <a href="{{ route('index') }}" class="menu-link">
                     <span class="menu-icon"><i class="mgc_home_3_line"></i></span>
-                    <span class="menu-text"> Dashboard </span>
+                    <span class="menu-text"> Dashboard</span>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_user_5_fill"></i></span>
-                    <span class="menu-text"> Empleados </span>
-                    <span class="menu-arrow"></span>
-                </a>
+            @if (auth()->user()->hasRole(['admin_empresa', 'usuario_empresa']) and auth()->user()->company->modules->contains(1))
+                <li class="menu-item">
+                    <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_user_5_fill"></i></span>
+                        <span class="menu-text"> Empleados </span>
+                        <span class="menu-arrow"></span>
+                    </a>
 
-                <ul class="sub-menu hidden">
-                    <li class="menu-item">
-                        <a href="{{ route('admin.create_employee') }}" class="menu-link">
-                            <span class="menu-text">Crear Empleado</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('admin.employees') }}" class="menu-link">
-                            <span class="menu-text">Ver plantilla</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-item">
-                <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_group_fill"></i></span>
-                    <span class="menu-text"> Clientes </span>
-                    <span class="menu-arrow"></span>
-                </a>
+                    <ul class="sub-menu hidden">
+                        <li class="menu-item">
+                            <a href="{{ route('admin.create_employee') }}" class="menu-link">
+                                <span class="menu-text">Crear Empleado</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('admin.employees') }}" class="menu-link">
+                                <span class="menu-text">Ver plantilla</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+            @if (auth()->user()->hasRole(['admin_empresa', 'usuario_empresa']) and auth()->user()->company->modules->contains(2))
+                <li class="menu-item">
+                    <a href="javascript:void(0)" data-fc-type="collapse" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_group_fill"></i></span>
+                        <span class="menu-text"> Clientes </span>
+                        <span class="menu-arrow"></span>
+                    </a>
 
-                <ul class="sub-menu hidden">
-                    <li class="menu-item">
-                        <a href="{{ route('admin.create_client') }}" class="menu-link">
-                            <span class="menu-text">Crear cliente</span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('admin.clients') }}" class="menu-link">
-                            <span class="menu-text">Ver plantilla</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_coin_fill"></i></span>
-                    <span class="menu-text"> Finanzas </span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_chart_line_fill"></i></span>
-                    <span class="menu-text"> Contabilidad </span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_chart_bar_line"></i></span>
-                    <span class="menu-text"> Reportes </span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_wallet_4_fill"></i></span>
-                    <span class="menu-text"> Nominas </span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="{{ route('admin.webservice') }}" class="menu-link">
-                    <span class="menu-icon"><i class="mgc_world_fill"></i></span>
-                    <span class="menu-text"> WebService </span>
-                </a>
-            </li>
-
+                    <ul class="sub-menu hidden">
+                        <li class="menu-item">
+                            <a href="{{ route('admin.create_client') }}" class="menu-link">
+                                <span class="menu-text">Crear cliente</span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="{{ route('admin.clients') }}" class="menu-link">
+                                <span class="menu-text">Ver plantilla</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+            @if (auth()->user()->hasRole(['admin_empresa', 'usuario_empresa']) and auth()->user()->company->modules->contains(3))
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_coin_fill"></i></span>
+                        <span class="menu-text"> Finanzas </span>
+                    </a>
+                </li>
+            @endif
+            @if (auth()->user()->hasRole(['admin_empresa', 'usuario_empresa']) and auth()->user()->company->modules->contains(4))
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_chart_line_fill"></i></span>
+                        <span class="menu-text"> Contabilidad </span>
+                    </a>
+                </li>
+            @endif
+            @if (auth()->user()->hasRole(['admin_empresa', 'usuario_empresa']) and auth()->user()->company->modules->contains(5))
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_chart_bar_line"></i></span>
+                        <span class="menu-text"> Reportes </span>
+                    </a>
+                </li>
+            @endif
+            @if (auth()->user()->hasRole(['admin_empresa', 'usuario_empresa']) and auth()->user()->company->modules->contains(6))
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_wallet_4_fill"></i></span>
+                        <span class="menu-text"> Nominas </span>
+                    </a>
+                </li>
+            @endif
+            @role('super_admin')
+                <li class="menu-title">Administrador</li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.webservice') }}" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_world_fill"></i></span>
+                        <span class="menu-text"> WebService </span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.company.index') }}" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_building_1_fill"></i></span>
+                        <span class="menu-text"> Empresas </span>
+                    </a>
+                </li>
+            @endrole
         </ul>
     </div>
 </div>
