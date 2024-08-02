@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -92,4 +93,14 @@ Route::name('admin.')
                     Route::put('/actualizar/{company}', 'update')->name('company.update');
                 });
         });
+        Route::controller(UserController::class)
+            ->prefix('usuarios')
+            ->middleware('role:admin_empresa')
+            ->group(function () {
+                Route::get('/', 'index')->name('user.index');
+                Route::get('/crear', 'create')->name('user.create');
+                Route::post('/guardar', 'store')->name('user.store');
+                Route::get('/editar/{user}', 'edit')->name('user.edit');
+                Route::put('/actualizar/{user}', 'update')->name('user.update');
+            });
     });

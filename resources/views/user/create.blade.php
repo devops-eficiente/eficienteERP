@@ -18,74 +18,13 @@
             </div>
         </div>
     </div>
-    <form action="{{ route('admin.company.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.user.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="card">
-            <div class="card-header">
-                <div class="flex justify-between items-center">
-                    <h4 class="card-title">Datos Generales de la Empresa</h4>
-                </div>
-            </div>
-            <div class="p-6">
 
-                <div class="grid lg:grid-cols-4 gap-6">
-                    <div>
-                        <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Nombre de la empresa
-                        </label>
-                        <input type="text" id="simpleinput" class="form-input" name="bussines_name"
-                            placeholder="Ingresa el nombre" value="{{ old('bussines_name') }}" required>
-                        @error('bussines_name')
-                            <span class="text-red-800">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">RFC</label>
-                        <input type="text" id="rfc_input" class="form-input" name="rfc" value="{{ old('rfc') }}"
-                            placeholder="ABCD######XXX" oninput="validarInput(this)">
-                        <pre id="resultado"></pre>
-                        @error('rfc')
-                            <span class="text-red-800">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Correo Electronico
-                        </label>
-                        <div class="relative">
-                            <input type="email" id="leading-icon" name="email" value="{{ old('email') }}"
-                                class="form-input ps-11" placeholder="you@site.com">
-                            <div class="absolute inset-y-0 start-4 flex items-center z-20">
-                                <i class="mgc_mail_line text-lg text-gray-400"></i>
-                            </div>
-                        </div>
-                        @error('email')
-                            <span class="text-red-800">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Número de celular
-                        </label>
-                        <div class="relative">
-                            <input type="text" id="leading-icon" name="telephone" value="{{ old('telephone') }}"
-                                class="form-input ps-11" placeholder="#########">
-                            <div class="absolute inset-y-0 start-4 flex items-center z-20">
-                                <i class="mgc_cellphone_line text-lg text-gray-400"></i>
-                            </div>
-                        </div>
-                        @error('telephone')
-                            <span class="text-red-800">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br>
         <div class="card">
             <div class="card-header">
                 <div class="flex justify-between items-center">
-                    <h4 class="card-title">Administrador de la empresa</h4>
+                    <h4 class="card-title">Crear usuario</h4>
                 </div>
             </div>
             <div class="p-6">
@@ -93,11 +32,11 @@
                 <div class="grid lg:grid-cols-3 gap-6">
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Nombre del administrador
+                            Nombre del Usuario
                         </label>
-                        <input type="text" id="simpleinput" class="form-input" name="user_name"
-                            placeholder="Ingresa el nombre del usuario" value="{{ old('user_name') }}" required>
-                        @error('user_name')
+                        <input type="text" id="simpleinput" class="form-input" name="name"
+                            placeholder="Ingresa el nombre del usuario" value="{{ old('name') }}" required>
+                        @error('name')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
@@ -115,13 +54,13 @@
                             Correo Electronico
                         </label>
                         <div class="relative">
-                            <input type="user_email" id="leading-icon" name="user_email" value="{{ old('user_email') }}"
+                            <input type="email" id="leading-icon" name="email" value="{{ old('email') }}"
                                 class="form-input ps-11" placeholder="you@site.com">
                             <div class="absolute inset-y-0 start-4 flex items-center z-20">
                                 <i class="mgc_mail_line text-lg text-gray-400"></i>
                             </div>
                         </div>
-                        @error('user_email')
+                        @error('email')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
@@ -130,60 +69,27 @@
                             Contraseña
                         </label>
                         <div class="relative">
-                            <input type="text" id="leading-icon" name="user_password"
-                                value="{{ old('user_password') }}" class="form-input ps-11">
+                            <input type="text" id="leading-icon" name="password"
+                                value="{{ old('password') }}" class="form-input ps-11">
                             <div class="absolute inset-y-0 start-4 flex items-center z-20">
                                 <i class="mgc_key_2_fill text-lg text-gray-400"></i>
                             </div>
                         </div>
-                        @error('user_password')
+                        @error('password')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
             </div>
         </div>
-        <br>
-        <div class="card">
-            <div class="card-header">
-                <div class="flex justify-between items-center">
-                    <h4 class="card-title">Asignación de módulos</h4>
-                </div>
-            </div>
-            <div class="p-6">
-
-                <div class="grid lg:grid-cols-3 gap-6">
-                    <div class="flex gap-6 my-4 flex-col">
-                        <div>
-                            <h6 class="text-sm mb-2">Selecciona los módulos de la empresa</h6>
-                            @error('modules')
-                                <span class="text-red-800">{{ $message }}</span>
-                            @enderror
-                            <div class="flex gap-4 flex-row">
-                                @foreach ($modules as $module)
-                                    <div class="form-check flex gap-2">
-                                        <input type="checkbox" class="form-checkbox rounded text-primary" value="{{$module->id}}" name="modules[]"
-                                            id="customCheck{{ $module->id }}">
-                                        <label class="ms-1.5" for="customCheck{{ $module->id }}">
-                                            {{ $module->name }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="flex items-center justify-around my-4">
-            <button type="submit" class="btn bg-success text-white rounded-full">Crear empresa</button>
-            <button type="button" class="btn bg-warning text-white rounded-full">Cancelar</button>
+            <button type="submit" class="btn bg-success text-white rounded-full">Crear usuario</button>
         </div>
     </form>
 @endsection
 
-@section('script')
+{{-- @section('script')
     <script>
         //Función para validar un RFC
         // Devuelve el RFC sin espacios ni guiones si es correcto
@@ -249,4 +155,4 @@
             resultado.innerText = "Formato: " + valido;
         }
     </script>
-@endsection
+@endsection --}}

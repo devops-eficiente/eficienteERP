@@ -118,7 +118,6 @@
 
         <div class="flex items-center justify-around my-4">
             <button type="submit" class="btn bg-success text-white rounded-full">Guardar empresa</button>
-            <button type="button" class="btn bg-warning text-white rounded-full">Cancelar</button>
         </div>
     </form>
 @endsection

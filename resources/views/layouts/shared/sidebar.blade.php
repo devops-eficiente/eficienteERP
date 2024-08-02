@@ -125,6 +125,15 @@
                     </a>
                 </li>
             @endrole
+            @role('admin_empresa')
+                <li class="menu-title">Administrador</li>
+                <li class="menu-item">
+                    <a href="{{ route('admin.user.index') }}" class="menu-link">
+                        <span class="menu-icon"><i class="mgc_user_3_fill"></i></span>
+                        <span class="menu-text"> Usuarios </span>
+                    </a>
+                </li>
+            @endrole
         </ul>
     </div>
 </div>
