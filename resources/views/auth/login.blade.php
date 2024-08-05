@@ -49,15 +49,13 @@
                                 placeholder="Ingresa tu contraseña" name="password" value="{{ old('password') }}">
                         </div>
 
-                        {{-- <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center">
-                                    <input type="checkbox" class="form-checkbox rounded" id="checkbox-signin">
-                                    <label class="ms-2" for="checkbox-signin">Remember me</label>
-                                </div>
-                                <a href="{{ route('second', ['auth', 'recoverpw']) }}"
-                                    class="text-sm text-primary border-b border-dashed border-primary">Forget Password
-                                    ?</a>
-                            </div> --}}
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <input name="remember" type="checkbox" class="form-checkbox rounded"
+                                    id="checkbox-signin">
+                                <label class="ms-2" for="checkbox-signin">Recuérdame</label>
+                            </div>
+                        </div>
 
                         <div class="flex justify-center mb-6">
                             <button class="btn w-full text-white bg-primary"> Ingresar</button>

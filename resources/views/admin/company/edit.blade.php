@@ -18,7 +18,7 @@
             </div>
         </div>
     </div>
-    <form action="{{ route('admin.company.update',$company->id) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.company.update', $company->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="card">
@@ -35,15 +35,16 @@
                             Nombre de la empresa
                         </label>
                         <input type="text" id="simpleinput" class="form-input" name="bussines_name"
-                            placeholder="Ingresa el nombre" value="{{ old('bussines_name',$company->bussines_name) }}" required>
+                            placeholder="Ingresa el nombre" value="{{ old('bussines_name', $company->bussines_name) }}"
+                            required>
                         @error('bussines_name')
                             <span class="text-red-800">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">RFC</label>
-                        <input type="text" id="rfc_input" class="form-input" name="rfc" value="{{ old('rfc',$company->rfc) }}"
-                            placeholder="ABCD######XXX" oninput="validarInput(this)">
+                        <input type="text" id="rfc_input" class="form-input" name="rfc"
+                            value="{{ old('rfc', $company->rfc) }}" placeholder="ABCD######XXX" oninput="validarInput(this)">
                         <pre id="resultado"></pre>
                         @error('rfc')
                             <span class="text-red-800">{{ $message }}</span>
@@ -51,11 +52,12 @@
                     </div>
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Correo Electronico
+                            Correo Electrónico
                         </label>
                         <div class="relative">
-                            <input type="email" id="leading-icon" name="email" value="{{ old('email',$company->email) }}"
-                                class="form-input ps-11" placeholder="you@site.com">
+                            <input type="email" id="leading-icon" name="email"
+                                value="{{ old('email', $company->email) }}" class="form-input ps-11"
+                                placeholder="you@site.com">
                             <div class="absolute inset-y-0 start-4 flex items-center z-20">
                                 <i class="mgc_mail_line text-lg text-gray-400"></i>
                             </div>
@@ -69,8 +71,9 @@
                             Número de celular
                         </label>
                         <div class="relative">
-                            <input type="text" id="leading-icon" name="telephone" value="{{ old('telephone',$company->phone) }}"
-                                class="form-input ps-11" placeholder="#########">
+                            <input type="text" id="leading-icon" name="telephone"
+                                value="{{ old('telephone', $company->phone) }}" class="form-input ps-11"
+                                placeholder="#########">
                             <div class="absolute inset-y-0 start-4 flex items-center z-20">
                                 <i class="mgc_cellphone_line text-lg text-gray-400"></i>
                             </div>
@@ -101,7 +104,8 @@
                             <div class="flex gap-4 flex-row">
                                 @foreach ($modules as $module)
                                     <div class="form-check flex gap-2">
-                                        <input type="checkbox" class="form-checkbox rounded text-primary" {{$company->modules->contains($module) ? 'checked': ''}}
+                                        <input type="checkbox" class="form-checkbox rounded text-primary"
+                                            {{ $company->modules->contains($module) ? 'checked' : '' }}
                                             value="{{ $module->id }}" name="modules[]"
                                             id="customCheck{{ $module->id }}">
                                         <label class="ms-1.5" for="customCheck{{ $module->id }}">

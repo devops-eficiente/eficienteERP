@@ -50,7 +50,7 @@
                     </div>
                     <div>
                         <label for="simpleinput" class="text-gray-800 text-sm font-medium inline-block mb-2">
-                            Correo Electronico
+                            Correo Electrónico
                         </label>
                         <div class="relative">
                             <input type="email" id="leading-icon" name="email" value="{{ old('email') }}"
@@ -162,7 +162,8 @@
                             <div class="flex gap-4 flex-row">
                                 @foreach ($modules as $module)
                                     <div class="form-check flex gap-2">
-                                        <input type="checkbox" class="form-checkbox rounded text-primary" value="{{$module->id}}" name="modules[]"
+                                        <input type="checkbox" class="form-checkbox rounded text-primary"
+                                            value="{{ $module->id }}" name="modules[]"
                                             id="customCheck{{ $module->id }}">
                                         <label class="ms-1.5" for="customCheck{{ $module->id }}">
                                             {{ $module->name }}

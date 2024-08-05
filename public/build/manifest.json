@@ -2,20 +2,23 @@
   "__commonjsHelpers-725317a4.js": {
     "file": "assets/_commonjsHelpers-725317a4.js"
   },
-  "_apexcharts.common-1a21294f.js": {
-    "file": "assets/apexcharts.common-1a21294f.js",
+  "_apexcharts.common-b651ca66.js": {
+    "file": "assets/apexcharts.common-b651ca66.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ]
   },
-  "_glightbox.min-3fffbd26.js": {
-    "file": "assets/glightbox.min-3fffbd26.js",
+  "_glightbox.min-363ce2aa.js": {
+    "file": "assets/glightbox.min-363ce2aa.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ]
   },
-  "_sortable.esm-9c3c89c5.js": {
-    "file": "assets/sortable.esm-9c3c89c5.js"
+  "_isObject-6594f1fa.js": {
+    "file": "assets/isObject-6594f1fa.js"
+  },
+  "_sortable.esm-0d19b1d3.js": {
+    "file": "assets/sortable.esm-0d19b1d3.js"
   },
   "node_modules/@simonwep/pickr/dist/themes/classic.min.css": {
     "file": "assets/classic.min-189efd1a.css",
@@ -83,22 +86,22 @@
     "src": "node_modules/nouislider/dist/nouislider.min.css"
   },
   "node_modules/plyr/dist/plyr.css": {
-    "file": "assets/plyr-5e9db6de.css",
+    "file": "assets/plyr-673fa1d7.css",
     "isEntry": true,
     "src": "node_modules/plyr/dist/plyr.css"
   },
   "node_modules/quill/dist/quill.bubble.css": {
-    "file": "assets/quill.bubble-7a27fca3.css",
+    "file": "assets/quill.bubble-0a3dbc90.css",
     "isEntry": true,
     "src": "node_modules/quill/dist/quill.bubble.css"
   },
   "node_modules/quill/dist/quill.core.css": {
-    "file": "assets/quill.core-ad135ecf.css",
+    "file": "assets/quill.core-4ef0ceab.css",
     "isEntry": true,
     "src": "node_modules/quill/dist/quill.core.css"
   },
   "node_modules/quill/dist/quill.snow.css": {
-    "file": "assets/quill.snow-8e59e50e.css",
+    "file": "assets/quill.snow-c5cb72d9.css",
     "isEntry": true,
     "src": "node_modules/quill/dist/quill.snow.css"
   },
@@ -108,12 +111,12 @@
     "src": "node_modules/shepherd.js/dist/css/shepherd.css"
   },
   "node_modules/sweetalert2/dist/sweetalert2.min.css": {
-    "file": "assets/sweetalert2.min-8851c940.css",
+    "file": "assets/sweetalert2.min-e0bcb809.css",
     "isEntry": true,
     "src": "node_modules/sweetalert2/dist/sweetalert2.min.css"
   },
   "node_modules/swiper/swiper-bundle.min.css": {
-    "file": "assets/swiper-bundle.min-7193df56.css",
+    "file": "assets/swiper-bundle.min-4a34f3c0.css",
     "isEntry": true,
     "src": "node_modules/swiper/swiper-bundle.min.css"
   },
@@ -139,7 +142,7 @@
     "src": "resources/fonts/MingCute.woff"
   },
   "resources/js/app.js": {
-    "file": "assets/app-3bf533d7.js",
+    "file": "assets/app-34433a8e.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ],
@@ -152,9 +155,10 @@
     "src": "resources/js/config.js"
   },
   "resources/js/head.js": {
-    "file": "assets/head-ea8ab24a.js",
+    "file": "assets/head-2588dc00.js",
     "imports": [
-      "__commonjsHelpers-725317a4.js"
+      "__commonjsHelpers-725317a4.js",
+      "_isObject-6594f1fa.js"
     ],
     "isEntry": true,
     "src": "resources/js/head.js"
@@ -165,26 +169,26 @@
     "src": "resources/js/pages/apps-calendar.js"
   },
   "resources/js/pages/apps-kanban.js": {
-    "file": "assets/apps-kanban-1ebb7570.js",
+    "file": "assets/apps-kanban-bb9c9cd6.js",
     "imports": [
-      "_sortable.esm-9c3c89c5.js"
+      "_sortable.esm-0d19b1d3.js"
     ],
     "isEntry": true,
     "src": "resources/js/pages/apps-kanban.js"
   },
   "resources/js/pages/charts-apex.js": {
-    "file": "assets/charts-apex-65f3596b.js",
+    "file": "assets/charts-apex-5a6db39d.js",
     "imports": [
-      "_apexcharts.common-1a21294f.js",
+      "_apexcharts.common-b651ca66.js",
       "__commonjsHelpers-725317a4.js"
     ],
     "isEntry": true,
     "src": "resources/js/pages/charts-apex.js"
   },
   "resources/js/pages/dashboard.js": {
-    "file": "assets/dashboard-c5f358ce.js",
+    "file": "assets/dashboard-f7efb461.js",
     "imports": [
-      "_apexcharts.common-1a21294f.js",
+      "_apexcharts.common-b651ca66.js",
       "__commonjsHelpers-725317a4.js"
     ],
     "isEntry": true,
@@ -196,16 +200,16 @@
     "src": "resources/js/pages/extended-animation.js"
   },
   "resources/js/pages/extended-lightbox.js": {
-    "file": "assets/extended-lightbox-11973ec7.js",
+    "file": "assets/extended-lightbox-310b8a74.js",
     "imports": [
-      "_glightbox.min-3fffbd26.js",
+      "_glightbox.min-363ce2aa.js",
       "__commonjsHelpers-725317a4.js"
     ],
     "isEntry": true,
     "src": "resources/js/pages/extended-lightbox.js"
   },
   "resources/js/pages/extended-plyr.js": {
-    "file": "assets/extended-plyr-053b8e4e.js",
+    "file": "assets/extended-plyr-c92109d1.js",
     "isEntry": true,
     "src": "resources/js/pages/extended-plyr.js"
   },
@@ -218,9 +222,9 @@
     "src": "resources/js/pages/extended-ratings.js"
   },
   "resources/js/pages/extended-sortable.js": {
-    "file": "assets/extended-sortable-2a03aa25.js",
+    "file": "assets/extended-sortable-2e0cdc64.js",
     "imports": [
-      "_sortable.esm-9c3c89c5.js"
+      "_sortable.esm-0d19b1d3.js"
     ],
     "isEntry": true,
     "src": "resources/js/pages/extended-sortable.js"
@@ -260,9 +264,10 @@
     "src": "resources/js/pages/form-color-pickr.js"
   },
   "resources/js/pages/form-editor.js": {
-    "file": "assets/form-editor-6ce8e09c.js",
+    "file": "assets/form-editor-4b0f6954.js",
     "imports": [
-      "__commonjsHelpers-725317a4.js"
+      "__commonjsHelpers-725317a4.js",
+      "_isObject-6594f1fa.js"
     ],
     "isEntry": true,
     "src": "resources/js/pages/form-editor.js"
@@ -306,7 +311,7 @@
     "src": "resources/js/pages/form-select.js"
   },
   "resources/js/pages/form-validation.js": {
-    "file": "assets/form-validation-2250d635.js",
+    "file": "assets/form-validation-f6d10673.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ],
@@ -314,16 +319,16 @@
     "src": "resources/js/pages/form-validation.js"
   },
   "resources/js/pages/gallery.js": {
-    "file": "assets/gallery-1fac8906.js",
+    "file": "assets/gallery-67cb175b.js",
     "imports": [
-      "_glightbox.min-3fffbd26.js",
+      "_glightbox.min-363ce2aa.js",
       "__commonjsHelpers-725317a4.js"
     ],
     "isEntry": true,
     "src": "resources/js/pages/gallery.js"
   },
   "resources/js/pages/highlight.js": {
-    "file": "assets/highlight-75500771.js",
+    "file": "assets/highlight-8163e5fd.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ],
@@ -362,7 +367,7 @@
     "src": "resources/js/pages/table-gridjs.js"
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-43380386.css",
+    "file": "assets/app-e98e300b.css",
     "isEntry": true,
     "src": "resources/scss/app.scss"
   },
