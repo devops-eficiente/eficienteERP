@@ -43,7 +43,7 @@ class EmployeeController extends Controller
         $identificationEmployees = IdentificationEmployee::all();
         $taxRegimes = TaxRegime::all();
 
-        return view('employee.create', compact('taxRegimes','bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
+        return view('employee.create', compact('taxRegimes', 'bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
     }
 
     public function store(EmployeeStoreRequest $request)
@@ -56,6 +56,7 @@ class EmployeeController extends Controller
                 'rfc' => $request->rfc,
                 'type' => 'employee',
                 'regimen' => 'fisica',
+                'company_id' => auth()->user()->company_id,
             ]);
             Employee::create([
                 'n_employee' => 'E-' . $ult,
@@ -101,7 +102,7 @@ class EmployeeController extends Controller
             $person = Person::where('rfc', $id)->firstorfail();
         } catch (\Throwable $th) {
             //throw $th;
-            return back()->with('denied','Empleado no encontrado');
+            return back()->with('denied', 'Empleado no encontrado');
         }
 
         return view('employee.show', compact('person'));
@@ -115,7 +116,7 @@ class EmployeeController extends Controller
         $identificationEmployees = IdentificationEmployee::all();
         $contact = $person->contacts[0];
         $taxRegimes = TaxRegime::all();
-        return view('employee.edit', compact('taxRegimes','person', 'contact', 'bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
+        return view('employee.edit', compact('taxRegimes', 'person', 'contact', 'bloodTypes', 'instituteHealths', 'maritalStatus', 'identificationEmployees'));
     }
 
     public function update(EditEmployeeRequest $request, $id)
@@ -167,7 +168,8 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Empleado actualizado correctamente');
     }
 
-    public function uploadDocument(Request $request, $id){
+    public function uploadDocument(Request $request, $id)
+    {
         $request->validate([
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
@@ -179,10 +181,10 @@ class EmployeeController extends Controller
             $person = Person::find($id);
             Session::put('person', $person);
             Session::put('persona', $persona);
-            return view('employee.verified', compact('person', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
+        return view('employee.verified', compact('person', 'persona'));
     }
 
     public function continue()
@@ -266,7 +268,8 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Datos Verificados correctamente.');
     }
 
-    public function checkCIF(Request $request, $id){
+    public function checkCIF(Request $request, $id)
+    {
         Session::forget('employee');
         Session::forget('persona');
         try {
@@ -274,13 +277,14 @@ class EmployeeController extends Controller
             $person = Person::find($id);
             Session::put('person', $person);
             Session::put('persona', $persona);
-            return view('employee.verified', compact('person', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
+        return view('employee.verified', compact('person', 'persona'));
     }
 
-    public function export_rfc(Request $request){
+    public function export_rfc(Request $request)
+    {
         try {
             if ($request->opcion == 'rfc_invalid') {
                 $employees = Person::with(['employee', 'addresses'])
@@ -334,7 +338,8 @@ class EmployeeController extends Controller
         }
     }
 
-    public function uploadZip(Request $request){
+    public function uploadZip(Request $request)
+    {
         $zipFilePath = $request->file('zip');
         $extractPath = public_path('eficiente/extracted_files'); // Ruta donde se extraerán los archivos
 
@@ -380,30 +385,40 @@ class EmployeeController extends Controller
 
     public function readPdf($path)
     {
-        $rutaDocumento = $path;
-        $cif = $this->searchCIF($rutaDocumento);
-        $rfc = $this->searchRFC($rutaDocumento);
+        try {
+            $rutaDocumento = $path;
+            $cif = $this->searchCIF($rutaDocumento);
+            $rfc = $this->searchRFC($rutaDocumento);
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage());
+        }
         return $this->checkRFC($rfc, $cif);
     }
 
     public function checkRFC($rfc, $cif)
     {
-        $scraper = Scraper::create();
-        $rfc = Rfc::parse($rfc);
-        $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
-        $persona = json_encode($person);
-        $persona = json_decode($persona);
-        $data = $persona;
-        if ($rfc->isFisica()) {
-            $data->tipo = 'fisica';
+        try {
+            $scraper = Scraper::create();
+            $rfc = Rfc::parse($rfc);
+            $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
+            $persona = json_encode($person);
+            $persona = json_decode($persona);
+            $data = $persona;
+            if ($rfc->isFisica()) {
+                $data->tipo = 'fisica';
+            }
+            if ($rfc->isMoral()) {
+                $data->tipo = 'moral';
+            }
+            return $data;
+        } catch (\Throwable $th) {
+            //throw $th;
+            throw new Exception($th->getMessage());
         }
-        if ($rfc->isMoral()) {
-            $data->tipo = 'moral';
-        }
-        return $data;
     }
 
-    public function searchCIF($path){
+    public function searchCIF($path)
+    {
         $parser = new Parser();
         try {
             $documento = $parser->parseFile($path); // Parsear el documento PDF
@@ -418,11 +433,12 @@ class EmployeeController extends Controller
                 return 'La cadena especificada no se encontró en el PDF.';
             }
         } catch (\Exception $e) {
-            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+            throw new Exception('Ocurrió un error al leer el PDF: ' . $e->getMessage());
         }
     }
 
-    public function searchRFC($path){
+    public function searchRFC($path)
+    {
         $parser = new Parser();
         try {
             $documento = $parser->parseFile($path);
@@ -438,11 +454,12 @@ class EmployeeController extends Controller
                 return 'La cadena especificada no se encontró en el PDF.';
             }
         } catch (\Exception $e) {
-            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+            throw new Exception('Ocurrió un error al leer el PDF: ' . $e->getMessage());
         }
     }
 
-    public function createEmployee($person){
+    public function createEmployee($person)
+    {
         try {
             DB::beginTransaction();
             $newperson = Person::create([
@@ -451,6 +468,7 @@ class EmployeeController extends Controller
                 'regimen' => 'fisica',
                 'start_date' => Carbon::parse($person->fecha_inicio_operaciones->date)->format('Y-m-d'),
                 'status' => $person->situacion_contribuyente,
+                'company_id' => auth()->user()->company_id,
             ]);
 
             $ult = Employee::max('id') + 1;
@@ -510,7 +528,8 @@ class EmployeeController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            return $th->getMessage();
+            // dd($th->getMessage());
+            throw new Exception($th->getMessage());
         }
     }
 
@@ -568,7 +587,8 @@ class EmployeeController extends Controller
         return redirect()->route('admin.employees')->with('success', 'Datos leidos corectamente.');
     }
 
-    public function createByDocument(Request $request){
+    public function createByDocument(Request $request)
+    {
         $request->validate([
             'pdf' => 'required|mimetypes:application/pdf|max:2000',
         ]);
@@ -585,7 +605,7 @@ class EmployeeController extends Controller
                 return 'En proceso';
             }
         } catch (\Throwable $th) {
-            return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
+            return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido. Mensaje: ' . $th->getMessage());
         }
         if ($request->type == 'employee') {
             return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');
@@ -594,17 +614,17 @@ class EmployeeController extends Controller
         }
     }
 
-    public function createByData(Request $request){
+    public function createByData(Request $request)
+    {
         try {
             $persona = $this->checkRFC($request->rfc, $request->cif);
-
             if ($persona->tipo == 'fisica') {
                 $this->createEmployee($persona);
             } else {
                 return back()->with('denied', 'Verificar archivo <br> Solo se pueden dar de alta a personas fisicas..');
             }
         } catch (\Throwable $th) {
-            return back()->with('denied', 'No se econtro a la persona verificar datos.');
+            return back()->with('denied', 'No se econtro a la persona verificar datos. Mensaje: ' . $th->getMessage());
         }
         if ($request->type == 'employee') {
             return redirect()->route('admin.employees')->with('success', 'Empleado creado correctamente');

@@ -9,34 +9,34 @@ class Person extends Model
 {
     use HasFactory;
     protected $table = 'persons';
-    protected $fillable = [
-        'rfc',
-        'type',
-        'regimen',
-        'start_date',
-        'status',
-        'comments'
-    ];
+    protected $fillable = ['rfc', 'type', 'regimen', 'start_date', 'status', 'comments', 'company_id'];
 
-    public function employee(){
+    public function employee()
+    {
         return $this->hasOne(Employee::class);
     }
-    public function client(){
+    public function client()
+    {
         return $this->hasOne(Client::class);
     }
-    public function addresses(){
+    public function addresses()
+    {
         return $this->hasMany(Address::class);
     }
-    public function contacts(){
+    public function contacts()
+    {
         return $this->hasMany(Contact::class);
     }
-    public function rfc_data(){
+    public function rfc_data()
+    {
         return $this->hasMany(RfcData::class);
     }
-    public function tax_regimes(){
-        return $this->belongsToMany(TaxRegime::class)->withPivot('status','end_date','start_date');
+    public function tax_regimes()
+    {
+        return $this->belongsToMany(TaxRegime::class)->withPivot('status', 'end_date', 'start_date');
     }
-    public function company(){
+    public function company()
+    {
         return $this->belongsTo(Company::class);
     }
 
@@ -47,7 +47,9 @@ class Person extends Model
      */
     public static function getClients()
     {
-        return self::has('client')->paginate(15);
+        return self::where('company_id', auth()->user()->company_id)
+            ->has('client')
+            ->paginate(15);
     }
     /**
      * Obtiene una colección de de Persons de tipo empleados.
@@ -56,6 +58,8 @@ class Person extends Model
      */
     public static function getEmployees()
     {
-        return self::has('employee')->paginate(15);
+        return self::where('company_id', auth()->user()->company_id)
+            ->has('employee')
+            ->paginate(15);
     }
 }

@@ -11,6 +11,7 @@ use App\Models\Person;
 use App\Models\RfcData;
 use App\Models\TaxRegime;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -43,6 +44,7 @@ class ClientController extends Controller
                 'rfc' => $request->rfc,
                 'type' => 'client',
                 'regimen' => $request->regimen,
+                'company_id' => auth()->user()->company_id,
             ]);
             $ult = Client::max('id') + 1;
             Client::create([
@@ -67,15 +69,15 @@ class ClientController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            return $th->getMessage();
-            return back()->with('denied', 'Sucedio un error.');
+            return back()->with('denied', 'Sucedio un error. Mensaje: ' . $th->getMessage());
         }
         return redirect()->route('admin.clients')->with('success', 'Cliente creado Correctamente');
     }
 
-    public function show($id){
-        $person = Person::where('rfc',$id)->first();
-        return view('client.show',compact('person'));
+    public function show($id)
+    {
+        $person = Person::where('rfc', $id)->first();
+        return view('client.show', compact('person'));
     }
 
     public function uploadDocument(Request $request, $id)
@@ -91,10 +93,10 @@ class ClientController extends Controller
             $person = Person::find($id);
             Session::put('person', $person);
             Session::put('persona', $persona);
-            return view('client.verified', compact('person', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
+        return view('client.verified', compact('person', 'persona'));
     }
 
     public function continue()
@@ -185,7 +187,9 @@ class ClientController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             // return $th->getMessage();
-            return redirect()->route('admin.employees')->with('denied', 'Error al actualizar los datos.');
+            return redirect()
+                ->route('admin.employees')
+                ->with('denied', 'Error al actualizar los datos. Mensaje: ' . $th->getMessage());
         }
 
         Session::forget('employee');
@@ -202,10 +206,10 @@ class ClientController extends Controller
             $person = Person::find($id);
             Session::put('person', $person);
             Session::put('persona', $persona);
-            return view('employee.verified', compact('person', 'persona'));
         } catch (\Throwable $th) {
             return back()->with('denied', 'Verificar archivo <br> Datos ilegibles o archivo invalido.');
         }
+        return view('employee.verified', compact('person', 'persona'));
     }
 
     public function export_rfc(Request $request)
@@ -306,27 +310,35 @@ class ClientController extends Controller
 
     public function readPdf($path)
     {
-        $rutaDocumento = $path;
-        $cif = $this->searchCIF($rutaDocumento);
-        $rfc = $this->searchRFC($rutaDocumento);
+        try {
+            $rutaDocumento = $path;
+            $cif = $this->searchCIF($rutaDocumento);
+            $rfc = $this->searchRFC($rutaDocumento);
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage());
+        }
         return $this->checkRFC($rfc, $cif);
     }
 
     public function checkRFC($rfc, $cif)
     {
-        $scraper = Scraper::create();
-        $rfc = Rfc::parse($rfc);
-        $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
-        $persona = json_encode($person);
-        $persona = json_decode($persona);
-        $data = $persona;
-        if ($rfc->isFisica()) {
-            $data->tipo = 'fisica';
+        try {
+            $scraper = Scraper::create();
+            $rfc = Rfc::parse($rfc);
+            $person = $scraper->obtainFromRfcAndCif(rfc: $rfc, idCIF: $cif);
+            $persona = json_encode($person);
+            $persona = json_decode($persona);
+            $data = $persona;
+            if ($rfc->isFisica()) {
+                $data->tipo = 'fisica';
+            }
+            if ($rfc->isMoral()) {
+                $data->tipo = 'moral';
+            }
+            return $data;
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage());
         }
-        if ($rfc->isMoral()) {
-            $data->tipo = 'moral';
-        }
-        return $data;
     }
 
     public function searchCIF($path)
@@ -345,7 +357,8 @@ class ClientController extends Controller
                 return 'La cadena especificada no se encontró en el PDF.';
             }
         } catch (\Exception $e) {
-            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+            // return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+            throw new Exception('Ocurrió un error al leer el PDF: ' . $e->getMessage());
         }
     }
 
@@ -366,7 +379,7 @@ class ClientController extends Controller
                 return 'La cadena especificada no se encontró en el PDF.';
             }
         } catch (\Exception $e) {
-            return 'Ocurrió un error al leer el PDF: ' . $e->getMessage();
+            throw new Exception('Ocurrió un error al leer el PDF: ' . $e->getMessage());
         }
     }
 
@@ -380,6 +393,7 @@ class ClientController extends Controller
                 'regimen' => $person->tipo,
                 'start_date' => Carbon::parse($person->fecha_inicio_operaciones->date)->format('Y-m-d'),
                 'status' => $person->situacion_contribuyente,
+                'company_id' => auth()->user()->company_id,
             ]);
 
             $ult = Client::max('id') + 1;
@@ -447,7 +461,7 @@ class ClientController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            return $th->getMessage();
+            throw new Exception($th->getMessage());
         }
     }
 

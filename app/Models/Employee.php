@@ -28,7 +28,8 @@ class Employee extends Model
         'emergency_contacts',
         'birthdate',
         'nationality',
-        'gender'
+        'gender',
+        'company_id',
     ];
     /**
      * Get the BloodType that owns the Employee.
