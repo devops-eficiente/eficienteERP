@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\CifGetData;
 use Illuminate\Http\Request;
 use App\Services\EstatusOrdenService;
 use DOMDocument;
@@ -139,5 +140,17 @@ class WebServiceController extends Controller
         //     echo 'Error en la solicitud SOAP: ' . $fault->getMessage();
         // }
         return view('webservice.index');
+    }
+
+    public function getRfcData(Request $request){
+        if(!isset($request->rfc) || !isset($request->idcif)){
+            return response()->json([
+                'success' => false,
+                'message' => 'Faltan datos. RFC e idCIF son requeridos',
+            ]);
+        }
+        // return $request->all();
+        $data = CifGetData::getCifData($request->rfc, $request->idcif);
+        return $data;
     }
 }

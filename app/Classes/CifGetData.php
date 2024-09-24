@@ -108,7 +108,7 @@ class CifGetData{
      * @return array The CIF data.
      * @throws \Exception If there is an error obtaining the data from the CDFI.
      */
-    public function getCifData(string $rfc, string $cif)
+    public static function getCifData(string $rfc, string $cif)
     {
         try {
             $scraper = Scraper::create();
