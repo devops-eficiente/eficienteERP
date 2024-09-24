@@ -150,7 +150,19 @@ class WebServiceController extends Controller
             ]);
         }
         // return $request->all();
-        $data = CifGetData::getCifData($request->rfc, $request->idcif);
-        return $data;
+        try {
+            //code...
+            $data = CifGetData::getCifData($request->rfc, $request->idcif);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 }
