@@ -6,13 +6,13 @@
     <a href="#" class="logo-box">
         <!-- Light Brand Logo -->
         <div class="logo-light">
-            <img src="/{{ asset('eficiente/logos/logo.png') }}" class="logo-lg h-6" alt="Light logo">
+            <img src="/{{ asset('eficiente/logos/logo.png') }}" class="h-6 logo-lg" alt="Light logo">
             <img src="{{ asset('eficiente/logos/iconlogo.png') }}" class="logo-sm rounded-xl" alt="Small logo">
         </div>
 
         <!-- Dark Brand Logo -->
         <div class="logo-dark">
-            <img src="{{ asset('eficiente/logos/logo.png') }}" class="logo-lg h-6" alt="Dark logo">
+            <img src="{{ asset('eficiente/logos/logo.png') }}" class="h-6 logo-lg" alt="Dark logo">
             <img src="{{ asset('eficiente/logos/iconlogo.png') }}" class="logo-sm rounded-xl" alt="Small logo">
         </div>
     </a>
@@ -20,7 +20,7 @@
     <!-- Sidenav Menu Toggle Button -->
     <button id="button-hover-toggle" class="absolute top-5 end-2 rounded-full p-1.5">
         <span class="sr-only">Menu Toggle Button</span>
-        <i class="mgc_round_line text-xl"></i>
+        <i class="text-xl mgc_round_line"></i>
     </button>
 
     <!--- Menu -->
@@ -42,7 +42,7 @@
                         <span class="menu-arrow"></span>
                     </a>
 
-                    <ul class="sub-menu hidden">
+                    <ul class="hidden sub-menu">
                         <li class="menu-item">
                             <a href="{{ route('admin.create_employee') }}" class="menu-link">
                                 <span class="menu-text">Crear Empleado</span>
@@ -64,7 +64,7 @@
                         <span class="menu-arrow"></span>
                     </a>
 
-                    <ul class="sub-menu hidden">
+                    <ul class="hidden sub-menu">
                         <li class="menu-item">
                             <a href="{{ route('admin.create_client') }}" class="menu-link">
                                 <span class="menu-text">Crear cliente</span>
@@ -134,6 +134,12 @@
                     </a>
                 </li>
             @endrole
+            <li class="menu-item">
+                <a href="{{ route('admin.conversations') }}" class="menu-link">
+                    <span class="menu-icon"><i class="mgc_whatsapp_line"></i></span>
+                    <span class="menu-text"> Chats WhatsApp </span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

@@ -94,13 +94,17 @@ Route::name('admin.')
                 });
         });
         Route::controller(UserController::class)
-            ->prefix('usuarios')
-            ->middleware('role:admin_empresa')
-            ->group(function () {
-                Route::get('/', 'index')->name('user.index');
-                Route::get('/crear', 'create')->name('user.create');
-                Route::post('/guardar', 'store')->name('user.store');
-                Route::get('/editar/{user}', 'edit')->name('user.edit');
-                Route::put('/actualizar/{user}', 'update')->name('user.update');
-            });
-    });
+        ->prefix('usuarios')
+        ->middleware('role:admin_empresa')
+        ->group(function () {
+            Route::get('/', 'index')->name('user.index');
+            Route::get('/crear', 'create')->name('user.create');
+            Route::post('/guardar', 'store')->name('user.store');
+            Route::get('/editar/{user}', 'edit')->name('user.edit');
+            Route::put('/actualizar/{user}', 'update')->name('user.update');
+        });
+
+        Route::controller(AdminController::class)->group(function () {
+            Route::get('conversaciones', 'conversations')->name('conversations');
+        });
+});

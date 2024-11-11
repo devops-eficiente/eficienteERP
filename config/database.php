@@ -62,6 +62,23 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+        'mysql_wabapi' => [
+            'driver' => 'mysql',
+            'host' => env('DB_EXTERNAL_HOST', 'host_externo'),
+            'port' => env('DB_EXTERNAL_PORT', '3306'),
+            'database' => env('DB_EXTERNAL_DATABASE', 'nombre_base_datos'),
+            'username' => env('DB_EXTERNAL_USERNAME', 'usuario'),
+            'password' => env('DB_EXTERNAL_PASSWORD', 'contraseña'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => 'InnoDB',
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',

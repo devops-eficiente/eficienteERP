@@ -34,7 +34,7 @@
             <main class="flex-grow p-6">
 
                 @yield('content')
-
+                @include('layouts.shared.button_whats')
             </main>
 
             @include('layouts.shared/footer')
