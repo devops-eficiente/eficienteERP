@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Message;
 use Livewire\Component;
 
 class WhatsappConversation extends Component
@@ -10,7 +11,7 @@ class WhatsappConversation extends Component
     public $messages;
     public function mount($step){
         $this->step = $step;
-        $this->messages = $step->messages;
+        $this->messages = Message::where('step_id', $step->id)->get();
     }
     public function render()
     {
