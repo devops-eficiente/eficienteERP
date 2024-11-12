@@ -5,6 +5,28 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
+    /**
+     * Gupshup API key, you can get this after creating an account
+     * on Gupshup and creating a new application.
+     *
+     */
+    'gupshup_apikey' => env('GUPSHUP_APIKEY'),
+
+    /**
+     * Gupshup source, you can get this after creating an account
+     * on Gupshup and creating a new application.
+     *
+     */
+    'gupshup_source' => env('GUPSHUP_SOURCE', 'https://api.gupshup.io/'),
+
+    /**
+     * The name of the application on Gupshup.
+     *
+     * This name is used to identify your application on Gupshup.
+     *
+     */
+    'gupshup_appname' => env('GUPSHUP_APPNAME'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

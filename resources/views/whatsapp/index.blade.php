@@ -48,10 +48,10 @@
                                         class="px-6 py-3 text-xs font-medium text-center text-gray-500 uppercase">
                                         Ultima actualización
                                     </th>
-                                    <th scope="col"
+                                    {{-- <th scope="col"
                                         class="px-6 py-3 font-medium text-center text-gray-500 uppercase ext-xs">
                                         Accion
-                                    </th>
+                                    </th> --}}
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
@@ -64,18 +64,19 @@
                                             {{ $whatsappSession->name }}
                                         </td>
                                         <td class="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
-                                            {{ $whatsappSession->created_at }}
+                                            {{ $whatsappSession->created_at->format('d-m-Y H:i A') }}
                                         </td>
                                         <td class="px-6 py-4 text-sm text-center text-gray-800 whitespace-nowrap">
-                                            {{ $whatsappSession->step->updated_at }}
+                                            {{ $whatsappSession->step->updated_at->format('d-m-Y H:i A') }}
                                         </td>
-                                        <td class="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
+                                        {{-- <td class="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
                                             <div class="flex flex-col gap-4">
                                                 <div>
                                                     @livewire('whatsapp-conversation', ['step' => $whatsappSession->step])
                                                 </div>
+
                                             </div>
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -106,5 +106,6 @@ Route::name('admin.')
 
         Route::controller(AdminController::class)->group(function () {
             Route::get('conversaciones', 'conversations')->name('conversations');
+            Route::get('enviar-notificacion/{id}', 'send_notification')->name('send_notification');
         });
 });
