@@ -10,7 +10,8 @@ class WhatsappMessage extends Component
     public $payload;
     public function mount($message){
         $this->message = $message;
-        $this->payload = json_decode($message->payload);
+        // dd($message);
+        $this->payload = $message->payload ;
     }
     public function render()
     {
